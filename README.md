@@ -34,4 +34,5 @@ async function myFunction(){
 
 ## Requirements
 
-You need note 7+ and (if version < 8) the flag node ```--harmony-async-await main```.
+You need note 7+ and (if version < 8) the node flag ```--harmony-async-await```.
+For the browser client, you need Chrome 56 or Firefox 52 (for async/await).

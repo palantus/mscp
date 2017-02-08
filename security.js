@@ -62,7 +62,7 @@ class Security{
       case "deny_all":
         return false
       case "localhost":
-        return ip == "127.0.0.1" || ip == "::ffff:127.0.0.1"
+        return ip == "127.0.0.1" || ip == "::ffff:127.0.0.1" || ip == "::1"
       case "access_key":
         return this.validateAccessKey(area, accessKey)
       case "ip_filter":
