@@ -1,21 +1,21 @@
 {
-	"name": "mscp",
-	"version": "1.0.0",
-	"main": "mscp.js",
+  "name": "mscp",
+  "version": "1.0.0",
+  "main": "mscp.js",
   "engineStrict" : true,
   "engines" : {
     "node" : ">=7.0.0"
   },
-	"dependencies" : {
-		"body-parser" : "*",
-  	"cookie-parser" : "*",
-		"express" : "*",
+  "dependencies" : {
+    "body-parser" : "*",
+    "cookie-parser" : "*",
+    "express" : "*",
     "request" : "*",
     "guid" : "*",
     "commander": "*",
     "ws": "*",
     "spdy": "*"
-	},
+  },
   "bin" : {
     "mscp" : "./cli.js"
   }
