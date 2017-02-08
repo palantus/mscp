@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+	<title>MSCP Configuration</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+	<link rel="stylesheet" type="text/css" href="/mscp/css/tablecreator.css" />
+	<link rel="stylesheet" type="text/css" href="/mscp/css/popupcreator.css" />
+	<link rel="stylesheet" type="text/css" href="/mscp/css/rightclickmenu.css" />
+	<link rel="stylesheet" type="text/css" href="/mscp/css/notifier.css" />
+	<link rel="stylesheet" type="text/css" href="/mscp/css/mscp.css" />
+
+	<script src="/mscp/js/jquery.min.js"></script>
+	<script src="/mscp/js/tablecreator.js"></script>
+	<script src="/mscp/js/popupcreator.js"></script>
+	<script src="/mscp/js/rightclickmenu.js"></script>
+	<script src="/mscp/js/notifier.js"></script>
+
+	<script src="/mscp/js/mscp.js"></script>
+	<script src="/mscp/js/mscp_remote.js"></script>
+	<script src="/mscp/js/mscp_deps.js"></script>
+	<script src="/mscp/js/mscp_misc.js"></script>
+	<script src="/mscp/js/mscp_serve.js"></script>
+	<script src="/mscp/js/mscp_forward.js"></script>
+	<script src="/mscp/js/mscp_security.js"></script>
+</head>
+<body>
+<div id="content-wrapper">
+  <h1>MSCP Configuration</h1>
+  <p id="important-info"></p>
+
+  <div id="tabcontainer">
+    <span class="tab" id="tabmiscbtn">Basic</span>
+    <span class="tab" id="tabremotebtn">Remote</span>
+    <span class="tab" id="tabdepbtn">Dependencies</span>
+    <span class="tab" id="tabservebtn">Server</span>
+    <span class="tab" id="tabforwardbtn">Forwards</span>
+    <span class="tab" id="tabsecuritybtn">Security</span>
+  </div>
+
+  <div class="tabcontent" id="remotecontent" style="display: none;">
+    <div class="uiBlock">
+      <h2>Servers</h2>
+    	<div id="ServersDiv" style="display:block"></div>
+    </div>
+
+    <div class="uiBlock" style="display:none" id="selectedservercontainer">
+      <h2>Selected server</h2>
+    	<div id="CurServerFunctions" style="display:block"></div>
+    </div>
+  </div>
+
+  <div class="tabcontent" id="depcontent" style="display: none;">
+    <div class="uiBlock">
+      <h2>Dependencies</h2>
+    	<div id="DependenciesDiv" style="display:block"></div>
+    </div>
+  </div>
+
+  <div class="tabcontent" id="servecontent" style="display: none;">
+    <div class="uiBlock">
+      <h2>Functions</h2>
+    	<div id="ServesDiv" style="display:block"></div>
+    </div>
+
+    <div class="uiBlock" style="display:none" id="selectedservecontainer">
+      <h2>Arguments of function &quot;<span id="servecurrentfunctionname"></span>&quot;</h2>
+    	<div id="CurServeArgs" style="display:block"></div>
+    </div>
+
+    <div class="uiBlock" id="servegenhandlercontainer">
+      <h2>Generate handler</h2>
+      <button id="GenHandlerBtn">Generate</button>
+      <div style="display:block"><pre id="generatedhandler"></pre></div>
+    </div>
+
+  </div>
+
+  <div class="tabcontent" id="forwardcontent" style="display: none;">
+    <div class="uiBlock">
+      <h2>Forwards</h2>
+    	<div id="ForwardDiv" style="display:block"></div>
+    </div>
+  </div>
+
+  <div class="tabcontent" id="securitycontent" style="display: none;">
+    <div class="uiBlock" id="securitybasic">
+      <h2>General security</h2>
+      <div>
+        <span>API+static access scheme:</span><select id="api_access_scheme">
+          <option value="full_access">Everyone can access</option>
+          <option value="access_key">Needs access key</option>
+          <option value="ip_filter">Needs to be allowed using IP filter</option>
+          <option value="access_key_and_ip_filter">Needs access key and to be allowed in IP filter</option>
+          <option value="localhost">Only localhost</option>
+          <option value="deny_all">Deny all access</option>
+        </select>
+      </div>
+      <div>
+        <span>Manage access scheme:</span><select id="manage_access_scheme"><br/>
+          <option value="full_access">Everyone can access</option>
+          <option value="access_key">Needs access key</option>
+          <option value="ip_filter">Needs to be allowed using IP filter</option>
+          <option value="access_key_and_ip_filter">Needs access key and to be allowed in IP filter</option>
+          <option value="localhost">Only localhost</option>
+          <option value="deny_all">Deny all access</option>
+        </select>
+      </div>
+      <br/>
+      <button class="savebasic">Save</button>
+    </div>
+    <div class="uiBlock" id="ipfilters">
+      <h2>IP Filters</h2>
+    	<div id="IPFiltersTable" style="display:block"></div>
+    </div>
+    <div class="uiBlock" id="accesskeys">
+      <h2>Access Keys</h2>
+    	<div id="AccessKeysTable" style="display:block"></div>
+    </div>
+  </div>
+
+  <div class="tabcontent" id="misccontent" style="display: none;">
+    <div class="uiBlock">
+      <h2>Basic</h2>
+
+      <span>Name:</span><input type="text" id="name"/><br/>
+      <br/>
+      <span>Enable HTTP:</span><input type="checkbox" id="enableHTTP"/><br/>
+      <span>Port:</span><input type="text" id="http_port"/><br/>
+      <br/>
+      <span>Enable HTTPS:</span><input type="checkbox" id="enableHTTPS"/><br/>
+      <span>Port:</span><input type="text" id="https_port"/><br/>
+      <span>Key path:</span><input type="text" id="https_key"/><br/>
+      <span>Certificate path:</span><input type="text" id="https_cert"/><br/>
+      <span>CA path:</span><input type="text" id="https_ca"/><br/>
+      <br/>
+      <button class="savebasic">Save</button>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

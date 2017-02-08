@@ -1,0 +1,248 @@
+.pcoverlay {
+    display: none;  /* ensures it?s invisible until it?s called */
+    position: fixed;  /* makes the div go into a position that?s absolute to the browser viewing area */
+    left: 0%; /* makes the div span all the way across the viewing area */
+    top: 0%; /* makes the div span all the way across the viewing area */
+    background-color: black;
+    -moz-opacity: 0.7; /* makes the div transparent, so you have a cool overlay effect */
+    opacity: .70;
+    filter: alpha(opacity=70);
+    width: 100%;
+    height: 100%;
+    z-index: 2; /* makes the div the second most top layer, so it?ll lay on top of everything else EXCEPT for divs with a higher z-index (meaning the #overlay ruleset) */
+}
+
+div.pcpopup{
+	display: none;
+	/*border: solid 1px black;*/
+    position: absolute;
+    /*left: 50%;
+    top: 50%;*/
+	top: 30px;
+    /*background-color: white;*/
+    z-index: 3;
+	/*resize:both;*/
+
+    /*height: 400px;*/
+    /*margin-top: -200px;*/
+
+    min-width: 200px;
+	min-height: 50px;
+    /*max-width: 1900px;*/
+    /*margin-left: -300px;*/
+	
+	/*background-color: #eeeeee; */
+	
+	-moz-box-shadow: 0px 0px 10px #333;
+	-webkit-box-shadow: 0px 0px 10px #333;
+	box-shadow: 0px 0px 10px #333;
+	
+	-moz-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+
+	background: rgba(210, 210, 210, 0.95);
+
+	/*font-family: Verdana, Geneva, sans-serif;*/
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 15px;
+	/*cursor: move;*/
+
+	-webkit-transition: background 0.3s; /* For Safari 3.1 to 6.0 */
+	transition: background 0.3s;
+
+
+	-webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
+}
+
+div.pcpopupmoving{
+	background: rgba(210, 210, 210, 0.4);
+	-webkit-transition: background 0.3s; /* For Safari 3.1 to 6.0 */
+	transition: background 0.3s;
+}
+
+div.pcpopup div.pcinner:nth-child(1){
+	border-top: none !important;
+}
+/*
+div.pcpopup .pccontent *{
+	cursor: auto;
+}
+*/
+
+div.pctopdiv{width: 100%; height: 34px; -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;border-radius: 5px 5px 5px 5px;/* background-color: rgba(200, 200, 200, 0.9); */}
+div.pctopdiv.moveable{cursor: move;}
+div.pctopctlbtns{white-space: nowrap;right: 4px; top: 4px; position: absolute;}
+div.pctopdiv div{float: left;}
+
+div.pctitle{
+	
+	font-size: 130%;
+	/*float:left;*/
+	/*margin-right: 73px;*/
+	padding: 5px;
+	padding-left: 8px;
+	white-space: nowrap;
+	overflow: hidden;
+	resize: none;
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select:none; 
+	user-select:none;
+	text-overflow: ellipsis;
+}
+
+div.pctabs{
+	/*border-bottom: 1px solid black;*/
+	/*
+	float:right;
+	margin-top: 5px;
+	margin-right: 58px;*/
+	/* padding: 4px; */
+	margin-right: 64px
+;
+	/*margin-top: 13px;*/
+	padding-left: 4px;
+}
+
+button.pctabtitle{
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, 0);
+	border-right: 1px solid black;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 7px;
+	padding-right: 7px;
+	border: 1px solid black;
+	
+	-moz-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 0px 0px;
+	margin: 0px;
+	margin-top: 4px;
+	/* border-bottom: 0px; */
+	height: 30px;
+	
+	margin-right: 2px;
+	border: 0px;
+}
+
+button.pctabtitlecurrent{
+	background-color: rgba(250, 250, 250, 0);
+	cursor: normal;
+	/* font-weight: bold; */
+	text-decoration: underline;
+}
+
+button.pctabtitle:hover{
+	/*border: 1px solid blue;*/
+	/*border-bottom: 0px;*/
+}
+
+div.pctabtitle{
+	float: left;
+}
+
+div.pccontent {
+	padding: 5px;
+	margin-left: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	clear: both;
+	overflow: auto;
+	/*border: 1px solid;*/
+	height: 100%;
+	/*background-color: white*/;
+	
+	-moz-border-radius: 0px 0px 5px 5px;
+	border-radius: 0px 0px 5px 5px;
+
+	/* background-color: rgb(250, 250, 250); */
+	
+	/*
+	background: -webkit-linear-gradient(top, #ffffff, #eeeeee);
+	background: -moz-linear-gradient(top, #ffffff, #eeeeee);
+	-ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff,endColorstr=#eeeeee)";
+	background: -ms-linear-gradient(top, #ffffff, #eeeeee);
+	*/
+}
+
+img.pctoprighticon{
+	/*float:right;*/
+	cursor: pointer;
+	
+	display: inline;
+	/*position: absolute;*/
+	top: 2px;
+	width: 20px;
+	height: 20px;
+	cursor: hand;
+}
+
+div.pctopctlbtns img 				{ background-color: none;}
+div.pctopctlbtns img:hover			{background-image: -webkit-radial-gradient(center center, circle contain, rgba(50, 50, 50, 0.3), rgba(0,0,0,0)); transition: background-image 1s;}
+div.pctopctlbtns img.pcclosebtn	 	{right: 2px;}
+div.pctopctlbtns img.pcmaximizebtn	{right: 22px;}
+div.pctopctlbtns img.pcminimizebtn	{right: 43px;}
+
+div.pcpopupmaximized {
+	width: 100% !important;
+	/*height: 100% !important;*/
+	left: 0px !important;
+	top: 0px !important;
+	margin: 0px !important;
+	border: 0px !important;
+	resize: none !important;
+	-moz-border-radius: 0px 0px 0px 0px !important;
+	border-radius: 0px 0px 0px 0px !important;
+}
+
+div.pcpopupmaximized  div.pccontent{
+	height: 100%;
+}
+
+div.pcpopupminimized {
+	display: none !important;
+}
+
+#pcminimizedtabls{
+	position: fixed;
+	left: 0px;
+	bottom: 0px;
+	background-color: white;
+	z-index: 99999;
+}
+
+#pcminimizedtabls div{
+	float: left;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	cursor: pointer;
+	border-top: 1px solid gray;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
+	font-size: 120%;
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select:none; 
+	user-select:none;
+}
+
+.pcresizehover{position: absolute; right: 0px; bottom: 0px; width: 15px; height: 15px;}
+.pcresizehover:hover{cursor: nw-resize}
+
+.pcfocused-animation{
+	border-color: blue !important;
+	transition: border-color 0.2s;
+	
+	box-shadow: 0px 0px 10px #00f !important;
+	transition: box-shadow 0.2s;
+}
+
+div.pcpopup iframe{
+	width: 100%;
+	height: 100%;
+	border: 0px;
+	margin: 0px;
+	padding: 0px;
+}

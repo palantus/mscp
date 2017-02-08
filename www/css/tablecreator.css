@@ -1,0 +1,156 @@
+div.tcdiv{
+	border-radius:5px;
+	width: 100%;
+}
+
+div.tcheader{
+	padding: 5px;
+	color: #333333;
+	position: relative;
+	height: 26px;
+}
+div.tcfooter{
+	border-top:1px solid gray;
+	padding: 5px;
+	color: #333333;
+	position: relative;
+	height: 26px;
+	-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
+}
+
+/* Gradient */
+div.tcdiv{
+}
+
+table.tctable{
+	border-spacing:0;
+	width: 100%;
+}
+
+/*
+span.tcleft{float: left; width: 50%; text-align: left; position: relative;}
+span.tcright{float: left; width: 50%; text-align: right; position: relative;}
+*/
+span.tcleft{left: 5px; position: absolute;}
+span.tcright{right: 5px; position: absolute;}
+
+/* Fix parent from collapsing when using float: left */
+div.tcfooter:after , div.tcheader:after {content: " "; display: block; height: 0; clear: both;} 
+button.tcbutton, div.tcfooter button, div.tcheader button{background-color:#FFF;border:1px solid #aaa;padding-bottom:4px;padding-left: 10px;padding-right: 10px; padding-top: 4px; margin: 0px; border-radius: 4px 4px 4px 4px;-moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;}
+button.tcbutton:hover, div.tcfooter button:hover, div.tcheader button:hover{background-color:#f5f5f5; cursor: pointer;}
+
+table.tctable thead th{
+	text-align: left;
+	/*border-left: 1px solid gray;*/
+	padding: 5px;
+	color: #333333;
+	border-bottom: 1px solid gray;
+	cursor: pointer;
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select:none; 
+	user-select:none;
+}
+
+table.tctable thead th:hover{
+	text-decoration: underline;
+}
+
+table.tctable thead th:first-child{
+	/*border-left: 0px;*/
+}
+
+table.tctable thead{
+	border-bottom: 1px solid gray;
+}
+
+table.tctable tbody td{
+	padding-left: 5px;
+	padding-right: 5px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+table.tctable table{
+	border-radius:5px;
+}
+
+table.tctable .clickable{
+	cursor: pointer;
+}
+
+table.tctable tbody tr:nth-child(odd){background-color: rgb(250, 250, 250);}
+table.tctable tbody tr:nth-child(even){background-color: #E2E4FF;}
+table.tctable tbody tr:hover{background-color: #D2D4EF;}
+
+div.tcpopup{
+	position: absolute;
+	z-index: 2;
+	display: none;
+	right: 0px;
+	text-align: left;
+	background-color: #eeeeee; 
+	padding: 5px; 
+	border: 1px solid black;
+	margin-top: 3px;
+	-moz-box-shadow: -1px 3px 3px #aaa;
+	-webkit-box-shadow: -1px 3px 3px #aaa;
+	box-shadow: -1px 3px 3px #aaa;
+	-moz-border-radius: 5px 5px 5px 5px;
+	border-radius: 5px 5px 5px 5px;
+	background: -webkit-linear-gradient(top, #ffffff, #eeeeee);
+	background: -moz-linear-gradient(top, #ffffff, #eeeeee);
+	-ms-filter:"progid:DXImageTransform.Microsoft.gradient(startColorstr=#ffffff,endColorstr=#eeeeee)";
+	background: -ms-linear-gradient(top, #ffffff, #eeeeee);
+}
+div.tcfieldspopup {padding: 5px !important;}
+div.tcfieldspopup tr td{border: 1px solid transparent; border-left: none; border-right: none; padding: 2px;}
+div.tcfieldspopup tr:hover{cursor: pointer;}
+div.tcfieldspopup tr:hover td{border-top: 1px solid gray; border-bottom: 1px solid gray; }
+div.tcfieldspopup tr{padding-left: 10px; padding-right: 10px;}
+div.tcfieldspopup table{margin: 0px; border-spacing: 0px;}
+
+div.tcfieldspopup table tr td:first-child{width: 20px;}
+div.tcfieldspopup table tr.enabled td:first-child:after{content: "✔";}
+
+div.tcrecordpopup h3 {width: 100%; text-align: center;}
+div.tcrecordpopup table{}
+div.tcrecordpopup table input, 
+div.tcrecordpopup table select,
+div.tcrecordpopup table textarea{width: 100%;}
+div.tcrecordpopup button {margin-top: 10px; margin-right: 3px;}
+
+div.tceditrecord table input[type="checkbox"]{width: 20px !important;}
+
+.tcnewrecorderror{color: red; margin-left: 5px;}
+th.tcdeleteheader{width: 15px;}
+td.tcdeletecell{text-align: right; cursor: pointer;}
+td.tcdeletecell img{height: 15px;}
+th.tceditheader{width: 15px;}
+td.tceditcell{text-align: right; cursor: pointer;}
+td.tceditcell img{height: 15px;}
+
+div.tcloading{
+	position: relative; 
+	left: 50%; 
+	display: none;
+	width: 100px;
+	margin-left: -50px;
+	padding: 10px;
+	border-radius: 10px;
+	box-shadow: 2px 2px 5px #333;
+	text-align: center;
+	background-color: rgba(5, 5, 5,0.6);
+	color: white;
+	-moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select:none; 
+	user-select:none;
+	pointer-events:none;
+}
+
+.tceditrecord table{width: 100%;}
+/*.tceditrecord tr td:first-child{width: 100px}*/
+.tceditrecord input{width: 100%; margin: 0px;}
+.tceditrecord select{width: 100%; margin: 0px;}
+.tceditrecord textarea{width: 100%;}

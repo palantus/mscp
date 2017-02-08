@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+	<title>Enter access key</title>
+</head>
+<body>
+
+<p>You do not have access to this site. Please enter an access key:</p>
+<input placeholder="Access key" id="accessKey" style="width: 300px;"></input>
+<button id="ok">Submit</button>
+
+<script>
+function init(){
+  document.getElementById("accessKey").focus();
+  document.getElementById("ok").addEventListener("click", function(e) {
+    let accessKey = document.getElementById("accessKey").value;
+    fetch(window.location.pathname.startsWith("/mscp") ? "/mscpapi/get-dependencies" : '/api', {
+      method: 'post',
+      body: JSON.stringify({accessKey: accessKey}),
+      credentials: 'include',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      })
+    }).then(() => location.reload());
+  });
+}
+document.addEventListener("DOMContentLoaded", init);
+</script>
+
+</body>
+</html>

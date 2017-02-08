@@ -1,0 +1,23 @@
+.rcmitem{
+	height: 20px;
+	cursor: pointer;
+	border: 1px solid transparent;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+.rcmitem:hover{
+	border: 1px solid gray;
+}
+
+.rcmitem:first-child{margin-top: 5px;}
+.rcmitem:last-child{margin-bottom: 5px;}
+
+.rcmitem{
+	line-height: 20px;
+	white-space: nowrap;
+	overflow: hidden;
+	resize: none;
+	text-overflow: ellipsis;
+	max-width: 200px;
+}
