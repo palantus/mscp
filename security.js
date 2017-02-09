@@ -16,12 +16,6 @@ class Security{
   }
 
   async onRequest(req, res, next){
-
-    if(req.path == "/mscp/js/browser.js" || req.path == "/api" || req.path == "/api/"){ //Always allowed
-      next();
-      return;
-    }
-
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     var data = req.body;
@@ -37,7 +31,9 @@ class Security{
 
     let accessKey = data.accessKey
 
-    let accessKeyCookieName = area == "api" ? "mscpAccessKeyAPI" : "mscpAccessKeyManage";
+    let accessKeyCookieName = area == "api" ? "mscpAccessKeyAPI"
+                            : area == "manage" ? "mscpAccessKeyManage"
+                            : "mscpAccessKeyStatic";
     if(accessKey === undefined){
       accessKey = req.cookies[accessKeyCookieName];
     }
@@ -46,7 +42,9 @@ class Security{
       res.cookie(accessKeyCookieName, accessKey, {httpOnly: false });
     }
 
-    if(this.validate(req.path, data, area, ip, accessKey)){
+    if(req.path == "/mscp/js/browser.js" || req.path == "/api" || req.path == "/api/"){ //Always allowed
+      next();
+    } else if(this.validate(req.path, data, area, ip, accessKey)){
       next()
     } else if(req.get("Accept").indexOf("text/html") >= 0){
       res.writeHead(200, "text/html");

@@ -15,13 +15,14 @@ function init(){
   document.getElementById("accessKey").focus();
   document.getElementById("ok").addEventListener("click", function(e) {
     let accessKey = document.getElementById("accessKey").value;
-    fetch(window.location.pathname.startsWith("/mscp") ? "/mscpapi/get-dependencies" : '/api', {
-      method: 'post',
-      body: JSON.stringify({accessKey: accessKey}),
-      credentials: 'include',
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      })
+    let path = window.location.pathname;
+    let url = path.startsWith("/mscp") ? "/mscpapi/get-dependencies"
+            : path.startsWith("/api") ? '/api'
+            : "/";
+    url += "?accessKey=" + accessKey;
+    fetch(url, {
+      method: 'get',
+      credentials: 'include'
     }).then(() => location.reload());
   });
 }
