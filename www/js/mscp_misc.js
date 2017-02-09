@@ -11,7 +11,8 @@ async function initMisc(){
       https_cert: $("#https_cert").val(),
       https_ca: $("#https_ca").val(),
       api_access_scheme: $("#api_access_scheme").val(),
-      manage_access_scheme: $("#manage_access_scheme").val()
+      manage_access_scheme: $("#manage_access_scheme").val(),
+      static_access_scheme: $("#static_access_scheme").val()
     });
   })
 
@@ -26,8 +27,7 @@ async function initMisc(){
   $("#https_ca").val(info.https_ca);
   $("#api_access_scheme").val(info.api_access_scheme);
   $("#manage_access_scheme").val(info.manage_access_scheme);
-
-  refreshVisibleSecurityGroups();
+  $("#static_access_scheme").val(info.static_access_scheme);
 }
 
 $(function() {

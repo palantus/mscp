@@ -16,15 +16,23 @@ class Security{
   }
 
   async onRequest(req, res, next){
+
+    if(req.path == "/mscp/js/browser.js" || req.path == "/api" || req.path == "/api/"){ //Always allowed
+      next();
+      return;
+    }
+
     let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
     var data = req.body;
     if(data === undefined || (Object.keys(data).length === 0 && data.constructor === Object))
       data = req.query;
 
-    let area = "api"
+    let area = "static"
     if(req.path.startsWith("/mscp")){
       area = "manage"
+    } else if(req.path.startsWith("/api")){
+      area = "api"
     }
 
     let accessKey = data.accessKey
@@ -38,22 +46,23 @@ class Security{
       res.cookie(accessKeyCookieName, accessKey, {httpOnly: false });
     }
 
-    if(this.validate(area, ip, accessKey)){
+    if(this.validate(req.path, data, area, ip, accessKey)){
       next()
     } else if(req.get("Accept").indexOf("text/html") >= 0){
       res.writeHead(200, "text/html");
       res.end(this.accessKeyPromptHTMLPage)
-      console.log("Denied request for area " + area + " from IP " + ip + " and access key \"" + accessKey + "\"")
+      console.log("Denied request for " + req.path + " from IP " + ip + (accessKey !== undefined ? " and access key \"" + accessKey + "\"" : ""))
     } else {
       res.writeHead(403);
       res.end("You do not have access to this content.")
-      console.log("Denied request for area " + area + " from IP " + ip + " and access key \"" + accessKey + "\"")
+      console.log("Denied request for " + req.path + " from IP " + ip + (accessKey !== undefined ? " and access key \"" + accessKey + "\"" : ""))
     }
   }
 
-  validate(area, ip, accessKey){
+  validate(path, data, area, ip, accessKey){
     let scheme = area == "api" ? this.setup.api_access_scheme
                : area == "manage" ? this.setup.manage_access_scheme
+               : area == "static" ? this.setup.static_access_scheme
                : "deny_all"
 
     switch(scheme){
@@ -64,11 +73,11 @@ class Security{
       case "localhost":
         return ip == "127.0.0.1" || ip == "::ffff:127.0.0.1" || ip == "::1"
       case "access_key":
-        return this.validateAccessKey(area, accessKey)
+        return this.validateAccessKey(path, data, area, accessKey)
       case "ip_filter":
-        return this.validateIP(area, ip)
+        return this.validateIP(path, data, area, ip)
       case "access_key_and_ip_filter":
-        return this.validateAccessKey(area, accessKey) && this.validateIP(area, ip)
+        return this.validateAccessKey(path, data, area, accessKey) && this.validateIP(path, data, area, ip)
       case undefined:
         return true
     }
@@ -77,43 +86,140 @@ class Security{
 
   }
 
-  validateIP(area, ip){
-    if(this.setup.ipFilters === undefined)
+  validateIP(path, data, area, ip){
+    if(this.setup.accessRules === undefined)
       return false
 
-    for(let f of this.setup.ipFilters){
-      if(f.area != area)
+    let matchesRule = false;
+    for(let f of this.setup.accessRules){
+      if((f.type != "ip" && f.type != "none") || (f.area != area && f.area != "all"))
         continue
 
-      if(f.filter === undefined || f.filter == null || f.filter === ""){
-        return true;
+      matchesRule = false;
+
+      if(f.type == "none"){
+        matchesRule = true;
+      } else if(f.filter === undefined || f.filter == null || f.filter === ""){
+        matchesRule = true;
       } else {
         try{
           if(new RegExp(f.filter).test(ip)){
-            return true
+            matchesRule = true;
           }
         } catch(err){
           console.log("Error validating IP " + ip + " against regexp \"" + f.filter + "\"");
           console.log(err)
         }
       }
-    }
-    return false;
-  }
 
-  validateAccessKey(area, accessKey){
-    if(this.setup.accessKeys === undefined)
-      return false
-
-    for(let f of this.setup.accessKeys){
-      if(f.area != area)
-        continue
-
-      if(f.accessKey !== "" && f.accessKey == accessKey){
+      if(matchesRule && this.validateSubRules(path, data, f)){
         return true;
       }
     }
     return false;
+  }
+
+  validateAccessKey(path, data, area, accessKey){
+    if(this.setup.accessRules === undefined)
+      return false
+
+    let matchesRule = false;
+    for(let f of this.setup.accessRules){
+      if((f.type != "key" && f.type != "none") || (f.area != area && f.area != "all"))
+        continue
+
+      matchesRule = false;
+
+      if(f.type == "none"){
+        matchesRule = true;
+      } else if(f.filter !== "" && f.filter == accessKey){
+        matchesRule = true;
+      }
+
+      if(matchesRule && this.validateSubRules(path, data, f)){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  validateSubRules(path, data, accessRule){
+    let subRules = accessRule.subRules || []
+    for(let sr of subRules){
+
+      if(sr.path.endsWith('*')){
+        let p = sr.path.substring(0, sr.path.length - 1)
+        if(!path.startsWith(p))
+          continue;
+      } else {
+        if(path != sr.path && path != sr.path + "/")
+          continue;
+      }
+
+      if(accessRule.default_permission == "allow" && sr.permission == "allow")
+        continue;
+
+      if(accessRule.default_permission == "deny" && sr.permission == "deny")
+        continue;
+
+      if(typeof sr.parameters === "string" && sr.parameters != ""){
+        let parmsMatch = true;
+        let vars = sr.parameters.split("\n")
+        for(let v of vars){
+          if(v == "")
+            continue;
+
+          let vsplits = v.split("=")
+          if(vsplits.length == 1 && data[vsplits[0]] === undefined){
+            //Doesn't have required parameter
+            parmsMatch = false;
+            break;
+          }
+
+          let varName = vsplits[0]
+          let varVal = vsplits[1]
+
+          if(varVal == "null" && data[varName] !== null){
+            parmsMatch = false;
+            break;
+          }
+
+          if(varVal == "undefined" && data[varName] !== undefined){
+            parmsMatch = false;
+            break;
+          }
+
+          if(data[varName] === undefined){
+            parmsMatch = false;
+            break;
+          }
+
+          if(varVal.startsWith("$")){
+            try{
+              if(!new RegExp(varVal.substring(1)).test(data[varName])){
+                parmsMatch = false;
+                break;
+              }
+            } catch(err){
+              parmsMatch = false;
+            }
+          } else {
+            if(varVal != data[varName]){
+              parmsMatch = false;
+              break;
+            }
+          }
+        }
+
+        if(!parmsMatch){
+          continue;
+        }
+      }
+
+      return sr.permission == "allow" ? true : false;
+    }
+
+    return accessRule.default_permission == "allow" ? true : false;
   }
 
 }

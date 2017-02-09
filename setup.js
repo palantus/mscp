@@ -2,7 +2,7 @@
 
 var url = require("url")
 var fs = require("fs")
-var guid = require("guid")
+var uuid = require("node-uuid")
 
 class Setup{
 
@@ -22,14 +22,6 @@ class Setup{
 
     if(data === undefined){
       res.end("Invalid request!");
-      return;
-    }
-
-    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    if(ip != "127.0.0.1" && ip != "::ffff:127.0.0.1"){
-      console.log("Received request from '" + ip + "' which was denied")
-      res.status(403)
-      res.end("Forbidden!")
       return;
     }
 
@@ -66,7 +58,7 @@ class Setup{
           this.setup.servers = []
 
         if(apiPath.toLowerCase() == "add-server"){
-          data.id = guid.raw()
+          data.id = uuid.v4()
           this.setup.servers.push(data)
         } else {
           for(let i = 0; i < this.setup.servers.length; i++){
@@ -253,6 +245,9 @@ class Setup{
         if(typeof data.manage_access_scheme === "string")
           this.setup.manage_access_scheme = data.manage_access_scheme
 
+        if(typeof data.static_access_scheme === "string")
+          this.setup.static_access_scheme = data.static_access_scheme
+
         await this.writeSetup()
 
         response = {}
@@ -270,7 +265,8 @@ class Setup{
           https_cert: this.setup.https_cert || "",
           https_ca: this.setup.https_ca || "",
           api_access_scheme: this.setup.api_access_scheme || "full_access",
-          manage_access_scheme: this.setup.manage_access_scheme || "full_access"
+          manage_access_scheme: this.setup.manage_access_scheme || "full_access",
+          static_access_scheme: this.setup.static_access_scheme || "full_access"
         }
         break;
 
@@ -286,7 +282,7 @@ class Setup{
         if(data && typeof data.name !== undefined && data.name != ""){
           if(data.args === undefined)
             data.args = []
-            
+
           def = await this.readDefinition()
           let serve = def.serve !== undefined ? def.serve : []
           let alreadyExists = false
@@ -466,54 +462,72 @@ class Setup{
 
 
       /* SECURITY */
-      case "get-ip-filters":
-        response = this.setup.ipFilters || []
+      case "get-access-rules":
+        response = this.setup.accessRules || []
         break;
-      case "add-ip-filter":
-        data.id = guid.raw()
-        if(this.setup.ipFilters === undefined)
-          this.setup.ipFilters = []
+      case "add-access-rule":
+        data.id = uuid.v4()
+        if(data.type == "key" && data.filter == "")
+          data.filter = uuid.v4()
 
-        this.setup.ipFilters.push(data)
+        if(this.setup.accessRules === undefined)
+          this.setup.accessRules = []
+
+        this.setup.accessRules.push(data)
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
         response = {}
         break;
-      case "remove-ip-filter":
-        for(let i = 0; i < this.setup.ipFilters.length; i++){
-          if(this.setup.ipFilters[i].id === data.id){
-            this.setup.ipFilters.splice(i);
+      case "remove-access-rule":
+        for(let i = 0; i < this.setup.accessRules.length; i++){
+          if(this.setup.accessRules[i].id === data.id){
+            this.setup.accessRules.splice(i, 1);
           }
         }
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
         response = {}
         break;
 
-      case "get-access-keys":
-        response = this.setup.accessKeys || []
+      case "get-access-sub-rules":
+        for(let a of this.setup.accessRules){
+          if(a.id == data.accessId){
+            response = a.subRules || [];
+            break;
+          }
+        }
         break;
 
-      case "add-access-key":
-        data.id = guid.raw()
-        data.accessKey = guid.raw()
-        if(this.setup.accessKeys === undefined)
-          this.setup.accessKeys = []
+      case "add-access-sub-rule":
+        data.id = uuid.v4()
+        for(let a of this.setup.accessRules){
+          if(a.id == data.accessId){
+            if(a.subRules === undefined)
+              a.subRules = []
+            a.subRules.push(data.rule)
+            break;
+          }
+        }
 
-        this.setup.accessKeys.push(data)
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
         response = {}
-        response = {}
         break;
 
-      case "remove-access-key":
-        if(this.setup.accessKeys === undefined)
-          this.setup.accessKeys = []
+      case "remove-access-sub-rule":
+        for(let a of this.setup.accessRules){
+          if(a.id == data.accessId){
+            if(a.subRules === undefined)
+              a.subRules = []
 
-        for(let i = 0; i < this.setup.accessKeys.length; i++){
-          if(this.setup.accessKeys[i].id === data.id){
-            this.setup.accessKeys.splice(i);
+            for(let i = 0; i < a.subRules.length; i++){
+              if(a.subRules[i].id == data.ruleId){
+                a.subRules.splice(i, 1)
+                break;
+              }
+            }
+            break;
           }
         }
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        response = {}
         break;
 
 

@@ -1,7 +1,7 @@
 "use strict"
 
 const WebSocket = require('ws')
-const guid = require("guid")
+const uuid = require("node-uuid")
 
 
 class ClientConnections{
@@ -138,7 +138,7 @@ class ClientConnections{
           }
         }
 
-        let id = guid.raw()
+        let id = uuid.v4()
 
         let promise = new Promise(function (resolve, reject) {
           this.replyPromises[id] = {resolve: resolve}
