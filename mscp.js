@@ -18,6 +18,11 @@ class MSCP{
     this.server.static = function(path){
       this.staticPath = path;
     }
+    this.mscpReady = new Promise((resolve) => this.mscpReadyResolve = resolve);
+
+    if(typeof process.send === "function"){
+      this.mscpReady.then(()=> process.send("mscp-is-ready"))
+    }
   }
 
   async _initDefinition(){
@@ -42,13 +47,15 @@ class MSCP{
     if(typeof this.handler === "object"){
       this.handler.definition = this.definition
       this.server = new Server(this)
-      this.server.run(port)
+      await this.server.run(port)
     } else {
       console.log("Not starting server, as there aren't any handler")
     }
 
     this.client = new Client(this.definition, this);
     await this.client.init();
+
+    this.mscpReadyResolve();
   }
 }
 

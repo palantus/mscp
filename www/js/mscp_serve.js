@@ -58,7 +58,14 @@ function initServe(){
             },
             onClick: function(record){
               showServe(record)
-            }
+            },
+            recordRightClickMenu: {actions: [
+              {title: "Call function", onClick: async function(a, r, cb){
+                let strWindowFeatures = "location=yes,height=570,width=520,scrollbars=yes,status=yes";
+                let URL = `/mscp/apibrowser?setup=1110000;${r.name}`;
+                let win = window.open(URL, "_blank", strWindowFeatures);
+              }}
+            ]}
           })
   tcServes.draw();
 

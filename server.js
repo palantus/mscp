@@ -80,6 +80,7 @@ class Server{
     app.use(bodyParser.json())
     app.use(cookieParser());
     app.use(async (req, res, next) => await this.security.onRequest.call(this.security, req, res, next));
+    app.use("/api/browse", express.static(path.join(__dirname, "www/apibrowser")))
     app.use("/api", async (req, res) => await handleAPIRequest.call(this, req, res));
     app.use("/mscp/libs", express.static(require("mscp-browserlibs")))
     app.use("/mscp", express.static(path.join(__dirname, "www")))

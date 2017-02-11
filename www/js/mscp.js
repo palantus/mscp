@@ -72,7 +72,7 @@ async function req(_command, _data){
   });
 }
 
-var dataTypesForSelect = ["string", "integer", "float", "boolean", "object", "array"];
+var dataTypesForSelect = ["string", "integer", "float", "boolean", "object", "array", "*"];
 
 function getUrlVar( name ){
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");

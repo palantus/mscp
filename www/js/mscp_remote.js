@@ -75,6 +75,14 @@ function initRemote(){
               }
             },
             recordRightClickMenu: {actions: [
+              {title: "Open in API browser", onClick: async function(a, r, cb){
+                if(r.type == "http"){
+                  var win = window.open(r.url + "/mscp/apibrowser", '_blank');
+                  win.focus();
+                } else {
+                  notify("Only possible for http")
+                }
+              }},
               {title: "Refresh info", onClick: async function(a, r, cb){
                 await req("refresh-server", r);
                 cb();

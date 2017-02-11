@@ -42,8 +42,13 @@ class Security{
       res.cookie(accessKeyCookieName, accessKey, {httpOnly: false });
     }
 
-    if(req.path.startsWith("/mscp/js/") || req.path.startsWith("/mscp/apibrowser") || req.path == "/api" || req.path == "/api/"){ //Always allowed
-      next();
+    if(req.path.startsWith("/mscp/js/")
+            || req.path.startsWith("/mscp/libs/")
+            || req.path.startsWith("/mscp/apibrowser")
+            || req.path == "/api/browse" || req.path == "/api/browse/"
+            || req.path == "/api" || req.path == "/api/")
+    {
+      next(); //Always allowed
     } else if(this.validate(req.path, data, area, ip, accessKey)){
       next()
     } else if(req.get("Accept").indexOf("text/html") >= 0){
