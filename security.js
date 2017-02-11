@@ -42,7 +42,7 @@ class Security{
       res.cookie(accessKeyCookieName, accessKey, {httpOnly: false });
     }
 
-    if(req.path == "/mscp/js/browser.js" || req.path == "/api" || req.path == "/api/"){ //Always allowed
+    if(req.path.startsWith("/mscp/js/") || req.path.startsWith("/mscp/apibrowser") || req.path == "/api" || req.path == "/api/"){ //Always allowed
       next();
     } else if(this.validate(req.path, data, area, ip, accessKey)){
       next()

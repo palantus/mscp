@@ -13,6 +13,7 @@ function initServe(){
             orderASC: true,
             columns: [
                   {title: "Name", dataKey: "name"},
+                  {title: "Title", dataKey: "title"},
                   {title: "Arguments", dataKey: "arguments", width: "270px"},
                   {title: "Description", dataKey: "description"},
                   {title: "Return type", dataKey: "returntype"}
@@ -28,6 +29,7 @@ function initServe(){
             createRecord: {
               fields: [
                 {name: "name", title: "Name"},
+                {name: "title", title: "Title", placeholder: "optional"},
                 {name: "description", title: "Description", type: "textarea"},
                 {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect}
               ],
@@ -43,6 +45,7 @@ function initServe(){
             editRecord: {
               fields: [
                 {name: "name", title: "Name"},
+                {name: "title", title: "Title", placeholder: "optional"},
                 {name: "description", title: "Description", type: "textarea"},
                 {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect}
               ],
@@ -67,6 +70,7 @@ function initServe(){
       showFieldsSelector: false,
       columns: [
         {title: "Name", dataKey: "name"},
+        {title: "Title", dataKey: "title"},
         {title: "Type", dataKey: "type"},
         {title: "Required", dataKey: "required"},
         {title: "Description", dataKey: "description"}
@@ -90,6 +94,7 @@ function initServe(){
       createRecord: {
         fields: [
           {name: "name", title: "Name"},
+          {name: "title", title: "Title", placeholder: "optional"},
           {name: "type", title: "Type", type: "select", values: dataTypesForSelect},
           {name: "required", title: "Required", type: "checkbox"},
           {name: "description", title: "Description", type: "textarea"}
@@ -107,6 +112,7 @@ function initServe(){
       editRecord: {
         fields: [
           {name: "name", title: "Name"},
+          {name: "title", title: "Title", placeholder: "optional"},
           {name: "type", title: "Type", type: "select", values: dataTypesForSelect},
           {name: "required", title: "Required", type: "checkbox"},
           {name: "description", title: "Description", type: "textarea"}

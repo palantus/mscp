@@ -1,7 +1,9 @@
 {
   "name": "mscp",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "main": "mscp.js",
+  "repository" : "palantus/mscp",
+  "License" : "MIT",
   "engineStrict" : true,
   "engines" : {
     "node" : ">=7.0.0"
@@ -14,7 +16,8 @@
     "node-uuid" : "*",
     "commander": "*",
     "ws": "*",
-    "spdy": "*"
+    "spdy": "*",
+    "mscp-browserlibs" : "palantus/mscp-browserlibs"
   },
   "bin" : {
     "mscp" : "./cli.js"

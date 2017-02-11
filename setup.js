@@ -321,6 +321,7 @@ class Setup{
           for(let i = 0; i < serve.length; i++){
             if(serve[i].name == data.name || serve[i].name == data.oldName){
               serve[i].name = data.name;
+              serve[i].title = data.title;
               serve[i].description = data.description;
               serve[i].returntype = data.returntype;
             }
@@ -410,6 +411,7 @@ class Setup{
               for(let a = 0; a < serve[i].args.length; a++){
                 if(serve[i].args[a].name == arg.name || serve[i].args[a].name == arg.oldName){
                   serve[i].args[a].name = arg.name;
+                  serve[i].args[a].title = arg.title;
                   serve[i].args[a].type = arg.type;
                   serve[i].args[a].required = arg.required;
                   serve[i].args[a].description = arg.description;

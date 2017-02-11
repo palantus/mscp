@@ -81,6 +81,7 @@ class Server{
     app.use(cookieParser());
     app.use(async (req, res, next) => await this.security.onRequest.call(this.security, req, res, next));
     app.use("/api", async (req, res) => await handleAPIRequest.call(this, req, res));
+    app.use("/mscp/libs", express.static(require("mscp-browserlibs")))
     app.use("/mscp", express.static(path.join(__dirname, "www")))
     app.use("/mscpapi", async (req, res) => await this.setupHandler.handleJSONRequest.call(this.setupHandler, req, res))
 
