@@ -89,9 +89,7 @@
       <div>
         <span>API access scheme:</span><select id="api_access_scheme">
           <option value="full_access">Everyone can access</option>
-          <option value="access_key">Needs access key</option>
-          <option value="ip_filter">Needs to be allowed using IP filter</option>
-          <option value="access_key_and_ip_filter">Needs access key and to be allowed in IP filter</option>
+          <option value="access_rule">Access denied, unless granted by access rule</option>
           <option value="localhost">Only localhost</option>
           <option value="deny_all">Deny all access</option>
         </select>
@@ -99,9 +97,7 @@
       <div>
         <span>Static access scheme:</span><select id="static_access_scheme">
           <option value="full_access">Everyone can access</option>
-          <option value="access_key">Needs access key</option>
-          <option value="ip_filter">Needs to be allowed using IP filter</option>
-          <option value="access_key_and_ip_filter">Needs access key and to be allowed in IP filter</option>
+          <option value="access_rule">Access denied, unless granted by access rule</option>
           <option value="localhost">Only localhost</option>
           <option value="deny_all">Deny all access</option>
         </select>
@@ -109,9 +105,7 @@
       <div>
         <span>Manage access scheme:</span><select id="manage_access_scheme"><br/>
           <option value="full_access">Everyone can access</option>
-          <option value="access_key">Needs access key</option>
-          <option value="ip_filter">Needs to be allowed using IP filter</option>
-          <option value="access_key_and_ip_filter">Needs access key and to be allowed in IP filter</option>
+          <option value="access_rule">Access denied, unless granted by access rule</option>
           <option value="localhost">Only localhost</option>
           <option value="deny_all">Deny all access</option>
         </select>
@@ -124,8 +118,12 @@
     	<div id="AccessTable" style="display:block"></div>
     </div>
     <div class="uiBlock" id="accesssubrules" style="display:none;">
-      <h2>Sub rules</h2>
+      <h2>Sub-rules</h2>
     	<div id="AccessSubRulesTable" style="display:block"></div>
+    </div>
+    <div class="uiBlock" id="accesskeys" style="display:none;">
+      <h2>Access Keys</h2>
+    	<div id="AccessKeysTable" style="display:block"></div>
     </div>
   </div>
 

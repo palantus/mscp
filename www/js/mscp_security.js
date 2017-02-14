@@ -1,4 +1,3 @@
-let availableSecuritySchemes = ["full_access", "access_key", "ip_filter", "access_key_and_ip_filter"]
 var securityAreas = ["api", "static", "manage", "all"];
 var securityAccessTypes = ["ip", "key", "none"];
 var securityAccessPermissions = ["allow", "deny"];
@@ -6,6 +5,8 @@ var tcSecurityAccessSubRules = null;
 var curAccess = null;
 
 async function initSecurity(){
+
+  /* Access Rules */
 
   let tcIPFilters = new TableCreator();
   tcIPFilters.init({	elementId: "AccessTable",
@@ -15,9 +16,9 @@ async function initSecurity(){
             columns: [
                   {title: "Id", dataKey: "id", visible: false},
                   {title: "Area", dataKey: "area"}, // Manage, API, *,
-                  {title: "Type", dataKey: "type"},
                   {title: "Description", dataKey: "description"},
-                  {title: "IP/key", dataKey: "filter"},
+                  {title: "IP address", dataKey: "ip"},
+                  {title: "Require key", dataKey: "require_access_key"},
                   {title: "Default permission", dataKey: "default_permission"}
                  ],
             dataSource: async function(onData){
@@ -26,14 +27,19 @@ async function initSecurity(){
                onData(data);
             },
             deleteRecord: {
-              onDelete: async function(record, cb){await req("remove-access-rule", record);cb();}
+              onDelete: async function(record, cb){
+                await req("remove-access-rule", record);
+                cb();
+                $("#accesssubrules").hide();
+                $("#accesskeys").hide();
+              }
             },
             createRecord: {
               fields: [
                 {name: "area", title: "Area", type: "select", values: securityAreas},
-                {name: "type", title: "Type", type: "select", values: securityAccessTypes},
                 {name: "description", title: "Description"},
-                {name: "filter", title: "IP/key", placeholder: "IP (regexp) or access key"},
+                {name: "ip", title: "IP address", placeholder: "regexp or IP (optional)"},
+                {name: "require_access_key", title: "Require access key", type: "checkbox"},
                 {name: "default_permission", title: "Default permission", type: "select", values: securityAccessPermissions}
               ],
               onCreate: async function(record, cb){
@@ -41,9 +47,25 @@ async function initSecurity(){
                 cb();
               }
             },
+            editRecord: {
+              fields: [
+                {name: "area", title: "Area", type: "select", values: securityAreas},
+                {name: "description", title: "Description"},
+                {name: "ip", title: "IP address", placeholder: "regexp or IP (optional)"},
+                {name: "require_access_key", title: "Require access key", type: "checkbox"},
+                {name: "default_permission", title: "Default permission", type: "select", values: securityAccessPermissions}
+              ],
+              onEdit: async function(oldRecord, newRecord, cb){
+                await req("update-access-rule", newRecord);
+                cb();
+                showAccess(newRecord)
+              }
+            },
             onClick: (r) => showAccess(r)
           })
   tcIPFilters.draw();
+
+  /* Sub-rules */
 
   tcSecurityAccessSubRules = new TableCreator();
   tcSecurityAccessSubRules.init({	elementId: "AccessSubRulesTable",
@@ -87,9 +109,57 @@ async function initSecurity(){
           })
   tcSecurityAccessSubRules.draw();
 
+
+  /* Access keys */
+
+  tcSecurityAccessSubRules = new TableCreator();
+  tcSecurityAccessSubRules.init({	elementId: "AccessKeysTable",
+            clickable: true,
+            showRecordsPerPageSelector: false,
+            showFieldsSelector: true,
+            columns: [
+                  {title: "Id", dataKey: "id", visible: false},
+                  {title: "Description", dataKey: "description"},
+                  {title: "Key", dataKey: "key"}
+                 ],
+            dataSource: async function(onData){
+              if(curAccess == null){
+                onData([])
+                return;
+              }
+
+              let response = await req('get-access-keys', {accessId: curAccess.id});
+              let forwards = await response.json()
+              onData(forwards);
+            },
+            deleteRecord: {
+              onDelete: async function(record, cb){
+                await req("remove-access-key", {accessId: curAccess.id, ruleId: record.id});
+                cb();
+              }
+            },
+            createRecord: {
+              fields: [
+                {title: "Description", name: "description"},
+                {title: "Key", name: "key", placeholder: "Leave blank for auto"}
+              ],
+              onCreate: async function(record, cb){
+                record.accessId = curAccess.id;
+                await req("add-access-key", {accessId: curAccess.id, rule: record});
+                cb();
+              }
+            },
+            onClick: (r) => prompt("Access key", r.key)
+          })
+  tcSecurityAccessSubRules.draw();
+
   function showAccess(a){
     curAccess = a;
     $("#accesssubrules").show();
+    if(curAccess.require_access_key)
+      $("#accesskeys").show();
+    else
+      $("#accesskeys").hide();
     tcSecurityAccessSubRules.reloadData();
   }
 }

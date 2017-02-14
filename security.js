@@ -75,12 +75,8 @@ class Security{
         return false
       case "localhost":
         return ip == "127.0.0.1" || ip == "::ffff:127.0.0.1" || ip == "::1"
-      case "access_key":
-        return this.validateAccessKey(path, data, area, accessKey)
-      case "ip_filter":
-        return this.validateIP(path, data, area, ip)
-      case "access_key_and_ip_filter":
-        return this.validateAccessKey(path, data, area, accessKey) && this.validateIP(path, data, area, ip)
+      case "access_rule":
+        return this.validateAccess(path, data, area, accessKey, ip)
       case undefined:
         return true
     }
@@ -89,25 +85,25 @@ class Security{
 
   }
 
-  validateIP(path, data, area, ip){
+  validateAccess(path, data, area, accessKey, ip){
     if(this.setup.accessRules === undefined)
       return false
 
-    let matchesRule = false;
+    let matchesIP = false;
+    let matchesKey = false;
     for(let f of this.setup.accessRules){
-      if((f.type != "ip" && f.type != "none") || (f.area != area && f.area != "all"))
+      if(f.area != area && f.area != "all")
         continue
 
-      matchesRule = false;
+      matchesIP = false;
+      matchesKey = false;
 
-      if(f.type == "none"){
-        matchesRule = true;
-      } else if(f.filter === undefined || f.filter == null || f.filter === ""){
-        matchesRule = true;
+      if(f.ip === undefined || f.ip == null || f.ip === ""){
+        matchesIP = true;
       } else {
         try{
           if(new RegExp(f.filter).test(ip)){
-            matchesRule = true;
+            matchesIP = true;
           }
         } catch(err){
           console.log("Error validating IP " + ip + " against regexp \"" + f.filter + "\"");
@@ -115,31 +111,16 @@ class Security{
         }
       }
 
-      if(matchesRule && this.validateSubRules(path, data, f)){
-        return true;
-      }
-    }
-    return false;
-  }
+      if(!matchesIP)
+        continue;
 
-  validateAccessKey(path, data, area, accessKey){
-    if(this.setup.accessRules === undefined)
-      return false
-
-    let matchesRule = false;
-    for(let f of this.setup.accessRules){
-      if((f.type != "key" && f.type != "none") || (f.area != area && f.area != "all"))
-        continue
-
-      matchesRule = false;
-
-      if(f.type == "none"){
-        matchesRule = true;
-      } else if(f.filter !== "" && f.filter == accessKey){
-        matchesRule = true;
+      if(f.require_access_key !== true) {
+        matchesKey = true;
+      } else if(accessKey && f.accessKeys !== undefined && f.accessKeys.findIndex((ak) => ak.key == accessKey) >= 0){
+        matchesKey = true;
       }
 
-      if(matchesRule && this.validateSubRules(path, data, f)){
+      if(matchesIP && matchesKey && this.validateSubRules(path, data, f)){
         return true;
       }
     }

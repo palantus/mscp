@@ -467,10 +467,9 @@ class Setup{
       case "get-access-rules":
         response = this.setup.accessRules || []
         break;
+
       case "add-access-rule":
         data.id = uuid.v4()
-        if(data.type == "key" && data.filter == "")
-          data.filter = uuid.v4()
 
         if(this.setup.accessRules === undefined)
           this.setup.accessRules = []
@@ -479,10 +478,25 @@ class Setup{
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
         response = {}
         break;
+
       case "remove-access-rule":
         for(let i = 0; i < this.setup.accessRules.length; i++){
           if(this.setup.accessRules[i].id === data.id){
             this.setup.accessRules.splice(i, 1);
+          }
+        }
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        response = {}
+        break;
+
+      case "update-access-rule":
+        for(let i = 0; i < this.setup.accessRules.length; i++){
+          if(this.setup.accessRules[i].id === data.id){
+            this.setup.accessRules[i].area = data.area;
+            this.setup.accessRules[i].description = data.description;
+            this.setup.accessRules[i].ip = data.ip;
+            this.setup.accessRules[i].default_permission = data.default_permission;
+            this.setup.accessRules[i].require_access_key = data.require_access_key;
           }
         }
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
@@ -522,6 +536,52 @@ class Setup{
             for(let i = 0; i < a.subRules.length; i++){
               if(a.subRules[i].id == data.ruleId){
                 a.subRules.splice(i, 1)
+                break;
+              }
+            }
+            break;
+          }
+        }
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        response = {}
+        break;
+
+      case "get-access-keys":
+        for(let a of this.setup.accessRules){
+          if(a.id == data.accessId){
+            response = a.accessKeys || [];
+            break;
+          }
+        }
+        break;
+
+      case "add-access-key":
+        data.id = uuid.v4()
+        if(data.rule.key == "")
+          data.rule.key = uuid.v4()
+
+        for(let a of this.setup.accessRules){
+          if(a.id == data.accessId){
+            if(a.accessKeys === undefined)
+              a.accessKeys = []
+            a.accessKeys.push(data.rule)
+            break;
+          }
+        }
+
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        response = {}
+        break;
+
+      case "remove-access-key":
+        for(let a of this.setup.accessRules){
+          if(a.id == data.accessId){
+            if(a.accessKeys === undefined)
+              a.accessKeys = []
+
+            for(let i = 0; i < a.accessKeys.length; i++){
+              if(a.accessKeys[i].id == data.ruleId){
+                a.accessKeys.splice(i, 1)
                 break;
               }
             }
