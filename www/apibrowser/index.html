@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+	<title>API Browser</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=10,IE=9,IE=8,IE=edge" />
+
+  <link rel="stylesheet" type="text/css" href="/mscp/apibrowser/apibrowser.css" />
+  <link rel="stylesheet" type="text/css" href="/mscp/apibrowser/response2html.css" />
+
+	<script src="/mscp/libs/js/jquery.min.js"></script>
+	<script src="/mscp/js/browser.js"></script>
+	<script src="/mscp/apibrowser/apibrowser.js"></script>
+	<script src="/mscp/apibrowser/response2html.js"></script>
+</head>
+<body>
+<div id="content-wrapper">
+  <a href="/mscp/apibrowser" id="pageheaderlink"><h1>API Browser</h1></a>
+
+  <div id="container">
+    <div id="functionlist"></div>
+    <div id="rightcontent">
+      <div id="function-name" class="right-sub-header"></div>
+      <div id="function-description"></div>
+
+      <hr/>
+
+      <!-- ARGS -->
+      <div id="argumentscontainer">
+        <div class="right-sub-header">Arguments</div>
+        <table id="function-args">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Required</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div id="no-args-message">None</div>
+      </div>
+
+      <!-- CALL -->
+      <div id="function-call-container">
+        <div class="right-sub-header">Call funtion</div>
+        <div id="function-call-args">
+        </div>
+        <button id="function-call-execute">Run</button>
+          <div id="function-call-results"></div>
+      </div>
+
+      <!-- JSON -->
+      <div id="function-json">
+        <div class="right-sub-header">JSON Definition</div>
+        <pre></pre>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

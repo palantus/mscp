@@ -1,0 +1,111 @@
+body,html{
+  background-color: #333333;
+}
+
+h1{color: white; text-align: center;}
+#pageheaderlink{text-decoration: none}
+
+#container{
+  display: flex;
+}
+
+#functionlist{
+  flex-grow: 1;
+  background-color: rgba(210, 210, 210, 1);
+  padding: 15px;
+  width: 7%;
+  min-width: 180px;
+}
+#rightcontent{
+  flex-grow: 4;
+  background-color: rgba(210, 210, 210, 1);
+  padding: 15px;
+  border-left: 1px solid black;
+  display: none;
+}
+
+/* Function list */
+#functionlist div.function{
+  color: #00aa00;
+  font-size: 120%;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#functionlist div.function:hover{
+  color: #007700;
+}
+
+/* Function details */
+
+div.right-sub-header, #function-name{
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+#argumentscontainer, #function-call-container, #function-json{
+    margin-bottom: 10px;
+}
+
+#function-args{
+  width: 100%;
+}
+
+#function-args th{
+  text-align: left;
+}
+
+#function-call-execute{
+  margin-top: 10px;
+}
+
+.function-call-arg-container span.function-call-arg-name{
+  min-width: 100px;
+  display: inline-block;
+  padding-right: 10px;
+}
+
+.tooltiptext {
+    visibility: hidden;
+
+    background-color: #333333;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    max-width: 400px;
+
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.function-call-arg-container:hover .tooltiptext:not(:empty), .function-call-arg-container input:focus + .tooltiptext:not(:empty) {
+    visibility: visible;
+}
+
+
+/* Buttons */
+button {
+  background: #575757;
+  background-image: linear-gradient(to bottom, #575757, #000000);
+  border-radius: 28px;
+  text-shadow: 1px 1px 3px #666666;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 15px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+  border: none;
+  min-width: 70px;
+  box-shadow: 0px 1px 3px #666666;
+}
+
+button:hover {
+  background: #000000;
+  background-image: linear-gradient(to bottom, #000000, #000000);
+  text-decoration: none;
+  cursor: pointer;
+}
