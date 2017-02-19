@@ -11,7 +11,7 @@ class Client{
   constructor(definition, mscp){
     this.definition = definition
     this.mscp = mscp
-    this.setupHandler = mscp.setup
+    this.setupHandler = mscp.setupHandler
     this._initFromDefinition()
     mscp._request = _request;
     this.serverDefinitions = {}

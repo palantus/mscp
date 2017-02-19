@@ -1,6 +1,6 @@
 {
   "name": "mscp",
-  "version": "1.0.6",
+  "version": "1.0.9",
   "main": "mscp.js",
   "repository" : "palantus/mscp",
   "License" : "MIT",
@@ -17,7 +17,7 @@
     "commander": "*",
     "ws": "*",
     "spdy": "*",
-    "mscp-browserlibs" : "palantus/mscp-browserlibs"
+    "mscp-browserlibs" : "*"
   },
   "bin" : {
     "mscp" : "./cli.js"

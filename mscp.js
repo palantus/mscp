@@ -10,13 +10,17 @@ var Setup = require("./setup.js")
 class MSCP{
 
   constructor(handler){
-    this.handler = handler
-    this.server = {uses: [], static: null}
+    this.handler = handler;
+    this.server = {uses: [], statics: []}
     this.server.use = function(...args){
-      this.uses.push(...args)
+      this.uses.push(args)
     }
-    this.server.static = function(path){
-      this.staticPath = path;
+    this.server.static = function(wwwPath, rootPath){
+      this.statics.push({wwwPath: wwwPath, rootPath: rootPath || ""})
+    }
+    this.server.addParentMSCP = function(mscp, rootPath){
+      this.parentMSCP = mscp
+      this.rootPath = rootPath.endsWith("/") ? rootPath : (rootPath + "/")
     }
     this.mscpReady = new Promise((resolve) => this.mscpReadyResolve = resolve);
 
@@ -31,8 +35,7 @@ class MSCP{
   }
 
   async start(port){
-    this.setup = new Setup(this)
-    this.setupHandler = this.setup
+    this.setupHandler = new Setup(this)
 
     await this._initDefinition()
     if(typeof this.definition !== "object"){

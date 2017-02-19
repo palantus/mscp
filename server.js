@@ -20,8 +20,10 @@ class Server{
     this.definition = mscp.definition
     this.handler = mscp.handler
     this.uses = mscp.server.uses
-    this.static = mscp.server.staticPath
-    this.setupHandler = mscp.setup
+    this.statics = mscp.server.statics
+    this.parentMSCP = mscp.server.parentMSCP
+    this.rootPath = mscp.server.rootPath || "/"
+    this.setupHandler = mscp.setupHandler
   }
 
   async run(callingPort){
@@ -29,68 +31,33 @@ class Server{
     await this.security.init()
 
     this.initHandler()
-    var app = express();
 
-    var handleAPIRequest = async (req, res) => {
-      var data = req.body;
-    	if(data === undefined || (Object.keys(data).length === 0 && data.constructor === Object))
-    		data = req.query;
-
-    	if(data === undefined){
-    		res.end("Invalid request!");
-    		return;
-    	}
-
-    	var apiPath = url.parse(req.url).pathname.substring(1);
-
-      var respond = (result, contentType, isBinary) => {
-    		if(result !== null && result !== undefined){
-    			if(contentType === undefined)
-    				res.writeHead(200, {'Content-Type':'application/json'});
-    			else
-    				res.writeHead(200, {'Content-Type': contentType});
-
-    			if(typeof result == "string")
-    				res.end(result);
-    			else if(typeof result == "object" && isBinary)
-    				res.end(result, 'binary')
-    			else
-    				res.end(JSON.stringify(result, null, 2));
-    		} else {
-    			res.writeHead(200, {'Content-Type':'application/json'});
-    			res.end(JSON.stringify({error: "Invalid response. Server Error. ", apiPath: apiPath, data: data, baseUrl: req.baseUrl}, null, 2));
-    		}
-      }
-
-      var response = null;
-
-      if(apiPath == ""){
-        response = this.getFullDefForClient()
-      } else
-        response = await this.handleRequest(apiPath, data)
-
-      if(typeof response === "object" && response.type == "response")
-        respond(response.data, response.contentType, response.isBinary)
-      else
-        respond(response)
+    var app = null;
+    if(this.parentMSCP !== undefined){
+      app = this.parentMSCP.server
+    } else {
+      app = express()
+      app.use(bodyParser.urlencoded({ extended: true }))
+      app.use(bodyParser.json())
+      app.use(cookieParser());
+      app.use(async (req, res, next) => await this.security.onRequest.call(this.security, req, res, next));
     }
 
-    //app.set('port', process.env.PORT || port || 8080);
-    app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(bodyParser.json())
-    app.use(cookieParser());
-    app.use(async (req, res, next) => await this.security.onRequest.call(this.security, req, res, next));
-    app.use("/api/browse", express.static(path.join(__dirname, "www/apibrowser")))
-    app.use("/api", async (req, res) => await handleAPIRequest.call(this, req, res));
-    app.use("/mscp/libs", express.static(require("mscp-browserlibs")))
-    app.use("/mscp", express.static(path.join(__dirname, "www")))
-    app.use("/mscpapi", async (req, res) => await this.setupHandler.handleJSONRequest.call(this.setupHandler, req, res))
+    app.use(`${this.rootPath}api/browse`, express.static(path.join(__dirname, "www/apibrowser")))
+    app.use(`${this.rootPath}api`, async (req, res) => await this.handleAPIRequest(req, res));
+    app.use(`${this.rootPath}mscp/libs`, express.static(require("mscp-browserlibs")))
+    app.use(`${this.rootPath}mscp`, express.static(path.join(__dirname, "www")))
+    app.use(`${this.rootPath}mscpapi`, async (req, res) => await this.setupHandler.handleJSONRequest.call(this.setupHandler, req, res))
 
     for(let use of this.uses)
       app.use.apply(app, use)
 
-    if(this.static != null)
-      app.use(express.static(this.static))
+    for(let s of this.statics)
+      app.use(`${s.rootPath}`, express.static(s.wwwPath))
+
+    if(this.parentMSCP !== undefined){
+      return; //Do not setup server, if there is a parent
+    }
 
     const server = http.createServer(app)
 
@@ -124,6 +91,50 @@ class Server{
         console.log(`Service ${this.definition.name} started on port ${sslPort} (https)`);
       })
     }
+  }
+
+  async handleAPIRequest (req, res){
+    var data = req.body;
+    if(data === undefined || (Object.keys(data).length === 0 && data.constructor === Object))
+      data = req.query;
+
+    if(data === undefined){
+      res.end("Invalid request!");
+      return;
+    }
+
+    var apiPath = url.parse(req.url).pathname.substring(1);
+
+    var respond = (result, contentType, isBinary) => {
+      if(result !== null && result !== undefined){
+        if(contentType === undefined)
+          res.writeHead(200, {'Content-Type':'application/json'});
+        else
+          res.writeHead(200, {'Content-Type': contentType});
+
+        if(typeof result == "string")
+          res.end(result);
+        else if(typeof result == "object" && isBinary)
+          res.end(result, 'binary')
+        else
+          res.end(JSON.stringify(result, null, 2));
+      } else {
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({error: "Invalid response. Server Error. ", apiPath: apiPath, data: data, baseUrl: req.baseUrl}, null, 2));
+      }
+    }
+
+    var response = null;
+
+    if(apiPath == ""){
+      response = this.getFullDefForClient()
+    } else
+      response = await this.handleRequest(apiPath, data)
+
+    if(typeof response === "object" && response.type == "response")
+      respond(response.data, response.contentType, response.isBinary)
+    else
+      respond(response)
   }
 
   getFullDefForClient(){

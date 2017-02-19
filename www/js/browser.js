@@ -2,7 +2,8 @@
 
 class MSCP{
   async init(){
-    this.def = await req("")
+    this.apiPath = typeof MSCP_API_PATH === "string" ? MSCP_API_PATH : '/api'
+    this.def = await this.apireq("")
 
     if(this.def.error !== undefined && localStorage.MSCPDefinition !== undefined){
       this.def = JSON.parse(localStorage.MSCPDefinition)
@@ -34,7 +35,7 @@ class MSCP{
         }
       }
 
-      var response = await req(s.name, data);
+      var response = await this.apireq(s.name, data);
       if(response.success === true)
         return response.result;
       else {
@@ -43,24 +44,29 @@ class MSCP{
       }
     }
   }
-}
 
-async function req(command, data = {}){
-  try{
-    let response = await fetch('/api/' + command, {
-      method: 'post',
-      body: JSON.stringify(data),
-      credentials: 'include',
-      headers: new Headers({
-        'Content-Type': 'application/json'
-      })
-    });
-    return await response.json();
-  } catch(err){
-    console.log(err)
-    return {success: false, error: "Could not connect to server or received invalid response"};
+  async apireq(command, data = {}){
+    return this.req(`${this.apiPath}/${command}`, data);
+  }
+
+  async req(url, data = {}){
+    try{
+      let response = await fetch(url, {
+        method: 'post',
+        body: JSON.stringify(data),
+        credentials: 'include',
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        })
+      });
+      return await response.json();
+    } catch(err){
+      console.log(err)
+      return {success: false, error: "Could not connect to server or received invalid response"};
+    }
   }
 }
+
 
 var mscp = new MSCP();
 mscp.ready = new Promise((resolve, reject)=>{mscp.readyResolve = resolve})

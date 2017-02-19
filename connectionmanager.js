@@ -14,8 +14,8 @@ class ClientConnections{
   }
 
   async init(){
-    if(this.mscp.setup.setup.servers !== undefined){
-      for(let s of this.mscp.setup.setup.servers){
+    if(this.mscp.setupHandler.setup.servers !== undefined){
+      for(let s of this.mscp.setupHandler.setup.servers){
         if(s.type == "websocket-server" && s.url){
           this.connect(s)
         } else if(s.type == "websocket-client"){
@@ -64,19 +64,19 @@ class ClientConnections{
     let msg = JSON.parse(message)
 
     if(server == null){
-      if(this.mscp.setup.setup.servers !== undefined && typeof msg.accesskey === "string" && msg.accesskey.length > 0){
+      if(this.mscp.setupHandler.setup.servers !== undefined && typeof msg.accesskey === "string" && msg.accesskey.length > 0){
         let serverId = this.accessKeyToServerId[msg.accesskey]
         if(serverId !== undefined && this.conns[serverId] !== undefined){
           server = this.conns[serverId].server
         } else {
-          for(let s of this.mscp.setup.setup.servers){
+          for(let s of this.mscp.setupHandler.setup.servers){
             if(s.type == "websocket-client" && s.accesskey == msg.accesskey){
               this.conns[s.id] = {server: s, ws: ws}
               this.accessKeyToServerId[msg.accesskey] = s.id
               this.connPromises[s.id].resolve()
               server = s
               ws.serverId = server.id;
-              let def = await this.mscp.setup.getServerDefinition(server)
+              let def = await this.mscp.setupHandler.getServerDefinition(server)
               this.mscp.client.addDefinition(server.id, def)
               break;
             }
