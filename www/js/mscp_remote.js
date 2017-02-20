@@ -133,8 +133,7 @@ function initRemote(){
               {title: "Add as dependency", onClick: async function(a, r, cb){
                 delete r.arguments;
                 r.namespace = curSelectedServer.namespace;
-                r.serverId = curSelectedServer.id;
-                await req("add-server-func-as-dep", r);
+                await req("add-server-func-as-dep", {serverId: curSelectedServer.id, func: r});
                 cb();
                 refreshDeps();
               }},

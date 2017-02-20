@@ -140,9 +140,14 @@ class Setup{
       case "get-dependencies":
         def = await this.readDefinition()
         let deps = def.dependencies !== undefined ? def.dependencies : []
+        deps = JSON.parse(JSON.stringify(deps))
+        if(this.setup.dependencyToServer == undefined)
+          this.setup.dependencyToServer = {}
         for(let d of deps){
+          let serverId = this.setup.dependencyToServer[(d.namespace?d.namespace+".":"")+d.name]
           for(let i = 0; i < this.setup.servers.length; i++){
-            if(this.setup.servers[i].id === d.serverId){
+            if(this.setup.servers[i].id === serverId){
+              d.serverId = serverId
               d.serverName = this.setup.servers[i].name
             }
           }
@@ -154,13 +159,18 @@ class Setup{
         if(data && typeof data.name !== undefined && data.name != ""){
           def = await this.readDefinition()
           let deps = def.dependencies !== undefined ? def.dependencies : []
+          if(this.setup.dependencyToServer == undefined)
+            this.setup.dependencyToServer = {}
           for(let i = 0; i < deps.length; i++){
             if(deps[i].name == data.name){
               deps.splice(i, 1)
+              this.setup.dependencyToServer[(deps[i].namespace?deps[i].namespace+".":"")+deps[i].name] = undefined
             }
           }
           def.dependencies = deps;
           await this.writeDefinition(def);
+          await this.writeSetup()
+          response = {}
         }
         break;
 
@@ -168,13 +178,19 @@ class Setup{
         if(data && typeof data.name !== undefined && data.name != ""){
           def = await this.readDefinition()
           let deps = def.dependencies !== undefined ? def.dependencies : []
+          if(this.setup.dependencyToServer == undefined)
+            this.setup.dependencyToServer = {}
           for(let i = 0; i < deps.length; i++){
             if(deps[i].name == data.name){
               deps[i].namespace = data.namespace
+              if(data.serverId)
+                this.setup.dependencyToServer[(deps[i].namespace?deps[i].namespace+".":"")+deps[i].name] = data.serverId
             }
           }
           def.dependencies = deps;
           await this.writeDefinition(def);
+          await this.writeSetup()
+          response = {}
         }
         break;
 
@@ -183,21 +199,26 @@ class Setup{
         break;
 
       case "add-server-func-as-dep":
-        if(data && typeof data.name !== undefined && data.name != ""){
+        if(data && data.func && typeof data.func.name !== undefined && data.func.name != ""){
+          let dep = data.func;
           def = await this.readDefinition()
           let deps = def.dependencies !== undefined ? def.dependencies : []
+          if(this.setup.dependencyToServer == undefined)
+            this.setup.dependencyToServer = {}
           let alreadyExists = false
           for(let i = 0; i < deps.length; i++){
-            if(deps[i].name == data.name && deps[i].namespace == data.namespace){
-              deps[i] = data;
+            if(deps[i].name == dep.name && deps[i].namespace == dep.namespace){
+              deps[i] = dep;
               alreadyExists = true;
             }
           }
           if(!alreadyExists){
-            deps.push(data);
+            deps.push(dep);
           }
           def.dependencies = deps;
+          this.setup.dependencyToServer[(dep.namespace?dep.namespace+".":"")+dep.name] = data.serverId
           await this.writeDefinition(def);
+          await this.writeSetup()
         }
         break;
 
