@@ -82,9 +82,12 @@ class Client{
       //Await initial load of definitions
       await self.loadDefinitionsPromise
 
-      if(typeof dep.serverId === "string" && dep.serverId.length > 0){
+      let d2s = self.setupHandler.setup.dependencyToServer || {}
+      let setupServerId = d2s[(dep.namespace?dep.namespace+".":"")+dep.name]
+
+      if(typeof setupServerId === "string" && setupServerId.length > 0){
         for(let s of servers){
-          if(s.id == dep.serverId){
+          if(s.id == setupServerId){
             chosenServer = s;
           }
         }

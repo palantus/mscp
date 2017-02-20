@@ -102,11 +102,11 @@ class Security{
         matchesIP = true;
       } else {
         try{
-          if(new RegExp(f.filter).test(ip)){
+          if(new RegExp(f.ip).test(ip)){
             matchesIP = true;
           }
         } catch(err){
-          console.log("Error validating IP " + ip + " against regexp \"" + f.filter + "\"");
+          console.log("Error validating IP " + ip + " against regexp \"" + f.ip + "\"");
           console.log(err)
         }
       }
