@@ -112,8 +112,8 @@ async function initSecurity(){
 
   /* Access keys */
 
-  tcSecurityAccessSubRules = new TableCreator();
-  tcSecurityAccessSubRules.init({	elementId: "AccessKeysTable",
+  tcSecurityAccessKeys = new TableCreator();
+  tcSecurityAccessKeys.init({	elementId: "AccessKeysTable",
             clickable: true,
             showRecordsPerPageSelector: false,
             showFieldsSelector: true,
@@ -151,7 +151,7 @@ async function initSecurity(){
             },
             onClick: (r) => prompt("Access key", r.key)
           })
-  tcSecurityAccessSubRules.draw();
+  tcSecurityAccessKeys.draw();
 
   function showAccess(a){
     curAccess = a;
@@ -161,6 +161,7 @@ async function initSecurity(){
     else
       $("#accesskeys").hide();
     tcSecurityAccessSubRules.reloadData();
+    tcSecurityAccessKeys.reloadData();
   }
 }
 

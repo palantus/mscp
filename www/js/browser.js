@@ -59,6 +59,11 @@ class MSCP{
           'Content-Type': 'application/json'
         })
       });
+      if(response.status == 403){
+        let accessKey = prompt("You do not have access to this functionality. Enter an access key to continue.")
+        data.accessKey = accessKey;
+        return await req(url, data)
+      }
       return await response.json();
     } catch(err){
       console.log(err)
