@@ -168,13 +168,27 @@ class Server{
         continue;
       }
 
-      if(this.handler[s.name] === undefined){
-        this.handler[s.name] = async function(...args){
-          return {error: "Not implemented"}
+      if(s.namespace){
+        if(this.handler[s.namespace] === undefined){
+          this.handler[s.namespace] = {}
         }
-      }
 
-      this.functionDef[s.name.toLowerCase()] = s;
+        if(this.handler[s.namespace][s.name] === undefined){
+          this.handler[s.namespace][s.name] = async function(...args){
+            return {error: "Not implemented"}
+          }
+        }
+
+        this.functionDef[s.namespace + '.' + s.name.toLowerCase()] = s;
+      } else {
+        if(this.handler[s.name] === undefined){
+          this.handler[s.name] = async function(...args){
+            return {error: "Not implemented"}
+          }
+        }
+
+        this.functionDef[s.name.toLowerCase()] = s;
+      }
     }
 
     let setup = this.setupHandler.setup
@@ -235,10 +249,17 @@ class Server{
     }
 
     let pathParts = apiPath.split("/")
-    let functionName = pathParts[0];
+    let namespace = null;
+    let functionName = pathParts.shift();
     let fdef = this.functionDef[functionName.toLowerCase()]
-    if(fdef === undefined)
+    if(fdef === undefined && pathParts.length > 0){
+      namespace  = functionName
+      functionName = pathParts.shift()
+      fdef = this.functionDef[namespace.toLowerCase() + '.' + functionName.toLowerCase()]
+    }
+    if(fdef === undefined){
       return {error: "Unknown function " + functionName, functionName: functionName}
+    }
 
     functionName = fdef.name; // name in the correct case (this.functionDef is lowercase)
 
@@ -249,15 +270,15 @@ class Server{
       if(typeof a === "string"){
         if(data[a] !== undefined)
           args.push(data[a])
-        else if(pathParts.length - 1 > argNum && pathParts[argNum + 1] != "null")
-          args.push(pathParts[argNum + 1])
+        else if(pathParts.length > argNum && pathParts[argNum] != "null")
+          args.push(pathParts[argNum])
         else
           return {error: "Missing argument: " + a}
       } else if (typeof a === "object"){
         if(data[a.name] !== undefined)
           args.push(data[a.name])
-        else if(pathParts.length - 1 > argNum && pathParts[argNum + 1] != "null")
-          args.push(pathParts[argNum + 1])
+        else if(pathParts.length > argNum && pathParts[argNum] != "null")
+          args.push(pathParts[argNum])
         else if(a.required === false || a.optional === true)
           args.push(null)
         else
@@ -268,7 +289,10 @@ class Server{
 
     let result = null;
     try {
-      result = await this.handler[functionName].apply(this.handler, args);
+      if(namespace != null)
+        result = await this.handler[namespace][functionName].apply(this.handler, args);
+      else
+        result = await this.handler[functionName].apply(this.handler, args);
     } catch (e) {
       console.log(e)
       return {

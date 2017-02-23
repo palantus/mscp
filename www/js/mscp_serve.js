@@ -12,6 +12,7 @@ function initServe(){
             orderByColumn: 0,
             orderASC: true,
             columns: [
+                  {title: "Namespace", dataKey: "namespace"},
                   {title: "Name", dataKey: "name"},
                   {title: "Title", dataKey: "title"},
                   {title: "Arguments", dataKey: "arguments", width: "270px"},
@@ -31,7 +32,8 @@ function initServe(){
                 {name: "name", title: "Name"},
                 {name: "title", title: "Title", placeholder: "optional"},
                 {name: "description", title: "Description", type: "textarea"},
-                {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect}
+                {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect},
+                {name: "namespace", title: "Namespace"}
               ],
               validate: function(record){return record.name !== ""},
               onCreate: async function(record, cb){
@@ -47,11 +49,13 @@ function initServe(){
                 {name: "name", title: "Name"},
                 {name: "title", title: "Title", placeholder: "optional"},
                 {name: "description", title: "Description", type: "textarea"},
-                {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect}
+                {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect},
+                {name: "namespace", title: "Namespace"}
               ],
               validate: function(oldRecord, newRecord){return newRecord.name !== "";},
               onEdit: async function(oldRecord, newRecord, cb){
                 newRecord.oldName = oldRecord.name;
+                newRecord.oldNamespace = oldRecord.namespace;
                 await req("update-serve", newRecord);
                 cb();
               }
@@ -148,7 +152,7 @@ function initServe(){
      let serve = await response.json()
 
      var handlerCode = "\"use strict\"\r\n\r\nclass Handler{\r\n"
-                     + "\r\n  async init(){\r\n    // Initialize handler if necessary\r\n  }\r\n";
+                     + "\r\n  async init(){\r\n    // Initialize handler if necessary. You need to call it yourself!\r\n  }\r\n";
 
      for(let s of serve){
        handlerCode += "\r\n  async " + s.name + "("

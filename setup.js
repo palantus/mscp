@@ -36,7 +36,10 @@ class Setup{
     switch(apiPath.toLowerCase()){
 
 
-      /* SERVERS */
+      // -------------------------
+      //        SERVERS
+      // -------------------------
+
       case "add-server":
       case "refresh-server":
         if(!data.url.startsWith("http"))
@@ -136,7 +139,9 @@ class Setup{
         break;
 
 
-      /* DEPENDENCIES */
+      // -------------------------
+      //        DEPENDENCIES
+      // -------------------------
       case "get-dependencies":
         def = await this.readDefinition()
         let deps = def.dependencies !== undefined ? def.dependencies : []
@@ -222,7 +227,10 @@ class Setup{
         }
         break;
 
-      /* BASIC */
+
+      // -------------------------
+      //        BASIC
+      // -------------------------
       case "set-basic-info":
         def = await this.readDefinition()
 
@@ -293,7 +301,9 @@ class Setup{
 
 
 
-      /* SERVE */
+      // -------------------------
+      //        SERVE
+      // -------------------------
       case "get-serve":
         def = await this.readDefinition()
         response = def.serve !== undefined ? def.serve : []
@@ -308,7 +318,7 @@ class Setup{
           let serve = def.serve !== undefined ? def.serve : []
           let alreadyExists = false
           for(let i = 0; i < serve.length; i++){
-            if(serve[i].name == data.name){
+            if(serve[i].name == data.name && serve[i].namespace == data.namespace){
               serve[i] = data;
               alreadyExists = true;
             }
@@ -326,7 +336,7 @@ class Setup{
           def = await this.readDefinition()
           let serve = def.serve !== undefined ? def.serve : []
           for(let i = 0; i < serve.length; i++){
-            if(serve[i].name == data.name){
+            if(serve[i].name == data.name && serve[i].namespace == data.namespace){
               serve.splice(i, 1)
             }
           }
@@ -340,11 +350,12 @@ class Setup{
           def = await this.readDefinition()
           let serve = def.serve !== undefined ? def.serve : []
           for(let i = 0; i < serve.length; i++){
-            if(serve[i].name == data.name || serve[i].name == data.oldName){
+            if((serve[i].name == data.name || serve[i].name == data.oldName) && (serve[i].namespace == data.namespace || serve[i].namespace == data.oldNamespace)){
               serve[i].name = data.name;
               serve[i].title = data.title;
               serve[i].description = data.description;
               serve[i].returntype = data.returntype;
+              serve[i].namespace = data.namespace;
             }
           }
           def.serve = serve;
@@ -354,7 +365,9 @@ class Setup{
 
 
 
-      /* SERVE ARGUMENTS */
+      // -------------------------
+      //    SERVE ARGUMENTS
+      // -------------------------
       case "get-serve-arguments":
         def = await this.readDefinition()
         if(def.serve !== undefined){
@@ -447,7 +460,9 @@ class Setup{
 
 
 
-      /* FORWARDS */
+      // -------------------------
+      //        FORWARDS
+      // -------------------------
       case "get-forwards":
         response = this.setup.forwards !== undefined ? this.setup.forwards : []
         break;
@@ -484,7 +499,9 @@ class Setup{
 
 
 
-      /* SECURITY */
+      // -------------------------
+      //        SECURITY
+      // -------------------------
       case "get-access-rules":
         response = this.setup.accessRules || []
         break;
@@ -614,7 +631,9 @@ class Setup{
         break;
 
 
-      /* Forward setup to remote server */
+      // -------------------------
+      //      Forward setup
+      // -------------------------
       case "forward-to-server":
         if(data.server !== undefined && data.command !== undefined){
           let url = null;

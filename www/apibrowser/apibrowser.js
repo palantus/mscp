@@ -12,7 +12,7 @@ function init(){
     if(setup.useFunctionTitles && s.title)
       functionDiv.html(s.title + (setup.showFunctionNames ? ` (${s.name})` : ''));
     else
-      functionDiv.html(s.name);
+      functionDiv.html((s.namespace ? s.namespace + '.' : '') + s.name);
     functionDiv.data("serve", s)
     functionDiv.click(onFunctionClick)
     $("#functionlist").append(functionDiv);
@@ -143,7 +143,9 @@ function runFunction(){
     }
     data.push(val !== undefined ? val : null);
   }
-  mscp[curServe.name].apply(mscp, data).then((result) => {
+
+  let func = curServe.namespace ? mscp[curServe.namespace][curServe.name] : mscp[curServe.name];
+  func.apply(mscp, data).then((result) => {
     $("#function-call-results").empty();
     parseAndAddResponse(result, $("#function-call-results"))
     //let strValue = typeof result === "object" ? JSON.stringify(result, null, 2) : result

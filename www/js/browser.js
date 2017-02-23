@@ -23,7 +23,15 @@ class MSCP{
   }
 
   _addDependency(s){
-    this[s.name] = async function(...args){
+    let obj = this;
+    if(s.namespace){
+      if(this[s.namespace] === undefined){
+        this[s.namespace] = {}
+      }
+      obj = this[s.namespace];
+    }
+
+    obj[s.name] = async function(...args){
       let data = {}
       let i = 0
       for(let i = 0; i < s.args.length && i < args.length; i++){
@@ -35,7 +43,7 @@ class MSCP{
         }
       }
 
-      var response = await this.apireq(s.name, data);
+      var response = await this.apireq((s.namespace ? s.namespace + "/" : "") + s.name, data);
       if(response.success === true)
         return response.result;
       else {
@@ -64,7 +72,7 @@ class MSCP{
         if(accessKey){
           data.accessKey = accessKey;
           return await this.req(url, data)
-        }        
+        }
       }
       return await response.json();
     } catch(err){
