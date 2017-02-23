@@ -39,3 +39,8 @@
 #function-call-results table tr:last-child td{
   border-bottom: 0px;
 }
+
+#function-call-results table.result-object > tr > td{
+  border-left: 0px;
+  border-right: 0px;
+}

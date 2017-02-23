@@ -64,6 +64,7 @@ div.right-sub-header, #function-name{
   min-width: 100px;
   display: inline-block;
   padding-right: 10px;
+  vertical-align: top;
 }
 
 .tooltiptext {

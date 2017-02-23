@@ -1,6 +1,6 @@
 function parseAndAddResponse(r, element, returnObjectAsRow){
   if(Array.isArray(r)){
-    let tab = $("<table></table>", {class: "result-object"})
+    let tab = $("<table></table>", {class: "result-array"})
 
     let columnNames = []
 
@@ -37,14 +37,17 @@ function parseAndAddResponse(r, element, returnObjectAsRow){
   }
 
   else if(typeof r === "object"){
-    let tab = $("<table><thead><th>Property</th><th>Value</th></thead></table>", {class: "result-object"})
+    //let tab = $("<table><thead><th>Property</th><th>Value</th></thead></table>", {class: "result-object"})
+    let tab = $("<table></table>", {class: "result-object"})
 
     for(let n in r){
       let prop = $("<td></td>", {html: n})
+      let equals = $("<td></td>", {html: "="})
       let val = $("<td></td>")
       parseAndAddResponse(r[n], val)
       let row = $("<tr></tr>")
       row.append(prop)
+      row.append(equals)
       row.append(val)
       tab.append(row)
     }

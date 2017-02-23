@@ -88,11 +88,10 @@ function onFunctionClick(){
           elementStr = `<input data-arg=${a.name} type="checkbox"/>`;
           break;
         case "object":
+          elementStr = `<textarea data-arg=${a.name} placeholder="JSON Object"/>`;
+          break;
         case "array":
-          elementStr = `null`;
-          if(a.required === true){
-            $("#function-call-execute").hide();
-          }
+          elementStr = `<textarea data-arg=${a.name} placeholder="JSON Array"/>`;
           break;
         default:
           alert(`Unsupported argument type: ${a.type}`);
@@ -119,6 +118,7 @@ function runFunction(){
       case "string":
       case "*":
         val = $(`.function-call-arg-container [data-arg="${a.name}"]`).val()
+        val = val == "" ? null : val
         break;
       case "integer":
         val = parseInt($(`.function-call-arg-container [data-arg="${a.name}"]`).val())
@@ -131,7 +131,12 @@ function runFunction(){
         break;
       case "object":
       case "array":
-        val = null;
+        try{
+          val = JSON.parse($(`.function-call-arg-container [data-arg="${a.name}"]`).val());
+        } catch(err){
+          alert("Invalid JSON in argument " + a.name)
+          return;
+        }
         break;
       default:
         alert(`Unsupported argument type: ${a.type}`);

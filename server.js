@@ -270,6 +270,7 @@ class Server{
     try {
       result = await this.handler[functionName].apply(this.handler, args);
     } catch (e) {
+      console.log(e)
       return {
         success: false,
         error: typeof e === "string" ? e : "An unknown error occured in server function '" + functionName + "'",

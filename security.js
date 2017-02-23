@@ -45,6 +45,7 @@ class Security{
     if(req.path.startsWith("/mscp/js/")
             || req.path.startsWith("/mscp/libs/")
             || req.path.startsWith("/mscp/apibrowser")
+            || req.path.startsWith("/mscpui/static/")
             || req.path == "/api/browse" || req.path == "/api/browse/"
             || req.path == "/api" || req.path == "/api/")
     {
