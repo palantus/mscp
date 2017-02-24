@@ -1,0 +1,95 @@
+body,html{margin: 0px; height: 100%; background-color: #333333;}
+#content-wrapper{display: flex; height: 100%;}
+#menu{flex-grow: 1; flex: 0 0 12em;}
+@media only screen and (max-device-width: 750px) {
+  #menu{display: none;}
+}
+#content{flex-grow: 4; background-color: rgba(210, 210, 210, 1);}
+#title{margin: 0px;margin-left: 10px; padding-top: 0.4em; color: white; font-size: 180%; display: inline-block;}
+#menutop, #titlebar{height: 4em;background-color: #333333;}
+#hamburger{color: white; font-size: 150%; text-decoration: none; cursor: pointer; padding-left: 5px;tap-highlight-color: rgba(0,0,0,0); -webkit-tap-highlight-color: rgba(255, 255, 255, 0); user-select: none;}
+#itemcontainer{padding: 15px; display: none;}
+
+div.menuitem{
+  /*background-image: linear-gradient(to bottom, #222222, #111111);*/
+  background-color: #222222;
+  color: white;
+  padding: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #dddddd;
+  transition: background 0.2s linear;
+  user-select: none;
+  position: relative;
+}
+#menuitems > div.menuitem:last-child{border-bottom: 1px solid #dddddd;}
+div.menuitem:hover{
+  /*background-image: linear-gradient(to bottom, #000000, #000000);*/
+  background-color: #000000;
+  cursor: pointer;
+}
+div.menuitemfunction.selected{
+  /*background-image: linear-gradient(to bottom, #550000, #440000);*/
+  background-color: #550000;
+}
+
+#menuitems div.namespace div.menuitemfunction{display: none; padding-left: 10px;}
+#menuitems div.namespace.open div.menuitemfunction{display:block;}
+#menuitems div.namespace div.menuitemnamespace span.menuarrow {display: inline-block; margin-left: 10px; color: #aaa; content: ' ▾'; transition: all 0.2s linear;transform:rotate(-90deg); position:absolute; right:15px;}
+#menuitems div.namespace.open div.menuitemnamespace span.menuarrow{transform:rotate(0deg);}
+
+#itemtitle{font-size: 120%; text-decoration: underline; margin-bottom: 10px;}
+
+/* Function call args */
+#function-call-execute{margin-top: 10px;}
+.function-call-arg-container span.function-call-arg-name{
+  min-width: 100px;
+  display: inline-block;
+  padding-right: 10px;
+  vertical-align: top;
+}
+div.function-call-arg-container input[type=text]{width: 300px;}
+
+.tooltiptext {
+    visibility: hidden;
+    background-color: #333333;
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    max-width: 400px;
+    position: absolute;
+    z-index: 1;
+}
+.function-call-arg-container:hover .tooltiptext:not(:empty), .function-call-arg-container input:focus + .tooltiptext:not(:empty) {
+    visibility: visible;
+}
+
+/* Buttons */
+button {
+  background: #575757;
+  background-image: linear-gradient(to bottom, #575757, #000000);
+  border-radius: 28px;
+  text-shadow: 1px 1px 3px #666666;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 15px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+  border: none;
+  min-width: 70px;
+  box-shadow: 0px 1px 3px #666666;
+}
+
+button:hover {
+  background: #000000;
+  background-image: linear-gradient(to bottom, #000000, #000000);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@media (pointer:coarse) {
+  button {
+    outline: none;
+  }
+}

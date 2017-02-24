@@ -49,6 +49,17 @@ class Server{
     app.use(`${this.rootPath}mscp`, express.static(path.join(__dirname, "www")))
     app.use(`${this.rootPath}mscpapi`, async (req, res) => await this.setupHandler.handleJSONRequest.call(this.setupHandler, req, res))
 
+    if(this.setupHandler.setup.enableUI === true && this.setupHandler.setup.ui !== undefined && this.setupHandler.setup.ui.apps !== undefined){
+      for(let a of this.setupHandler.setup.ui.apps){
+        app.use(`${this.rootPath}${a.name}`, express.static(path.join(__dirname, "www/ui")))
+      }
+      app.use(`${this.rootPath}uidef`, (req, res) => {
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify(this.setupHandler.setup.ui, null, 2))
+      })
+      app.use(`${this.rootPath}mscpui/static`, express.static(path.join(__dirname, "www/ui")))
+    }
+
     for(let use of this.uses)
       app.use.apply(app, use)
 
