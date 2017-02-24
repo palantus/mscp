@@ -9,9 +9,8 @@ var Setup = require("./setup.js")
 
 class MSCP{
 
-  constructor(handler){
-    this.handler = handler;
-    this.server = {uses: [], statics: []}
+  constructor(handlerClass){
+    this.server = {uses: [], statics: [], handlerClass: handlerClass}
     this.server.use = function(...args){
       this.uses.push(args)
     }
@@ -42,13 +41,7 @@ class MSCP{
       throw "Missing definition"
     }
 
-    if(this.handler === undefined)
-      this.handler = {}
-
-    this.handler.mscp = this
-
-    if(typeof this.handler === "object"){
-      this.handler.definition = this.definition
+    if(typeof this.server.handlerClass === "function"){
       this.server = new Server(this)
       await this.server.run(port)
     } else {

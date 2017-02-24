@@ -152,7 +152,8 @@ function initServe(){
      let serve = await response.json()
 
      var handlerCode = "\"use strict\"\r\n\r\nclass Handler{\r\n"
-                     + "\r\n  async init(){\r\n    // Initialize handler if necessary. You need to call it yourself!\r\n  }\r\n";
+                     + "\r\n  async init(){\r\n    // Initialize handler if necessary. Is called on every request\r\n  }\r\n"
+                     + "\r\n  async initFirst(){\r\n    // Initialize handler if necessary. Is called only once (before any requests).\r\n  }\r\n";
 
      for(let s of serve){
        handlerCode += "\r\n  async " + s.name + "("

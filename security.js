@@ -42,6 +42,8 @@ class Security{
       res.cookie(accessKeyCookieName, accessKey, {httpOnly: false });
     }
 
+    req.mscp = {ip: ip, accessKey: accessKey, area: area}
+
     if(req.path.startsWith("/mscp/js/")
             || req.path.startsWith("/mscp/libs/")
             || req.path.startsWith("/mscp/apibrowser")

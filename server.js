@@ -18,7 +18,9 @@ class Server{
   constructor(mscp){
     this.mscp = mscp
     this.definition = mscp.definition
-    this.handler = mscp.handler
+    this.handlerClass = mscp.server.handlerClass
+    this.handler = new mscp.server.handlerClass()
+    this.handlerGlobal = mscp.server.handlerGlobal
     this.uses = mscp.server.uses
     this.statics = mscp.server.statics
     this.parentMSCP = mscp.server.parentMSCP
@@ -140,7 +142,7 @@ class Server{
     if(apiPath == ""){
       response = this.getFullDefForClient()
     } else
-      response = await this.handleRequest(apiPath, data)
+      response = await this.handleRequest(apiPath, data, req)
 
     if(typeof response === "object" && response.type == "response")
       respond(response.data, response.contentType, response.isBinary)
@@ -161,6 +163,17 @@ class Server{
   async initHandler(){
     let h = this.handler
     let def = this.definition
+
+    if(this.handlerGlobal === undefined) //Allow caller to override
+      this.handlerGlobal = {}
+
+    h.mscp = this.mscp
+    h.definition = this.definition
+    h.request = null
+    h.global = this.handlerGlobal
+
+    if(typeof h.initFirst === "function")
+      await h.initFirst()
 
     this.functionDef = {}
 
@@ -254,7 +267,7 @@ class Server{
     }
   }
 
-  async handleRequest(apiPath, data){
+  async handleRequest(apiPath, data, req){
     if(apiPath == ""){
       return this.getFullDefForClient()
     }
@@ -300,10 +313,19 @@ class Server{
 
     let result = null;
     try {
+      let context = new this.handlerClass()
+      context.mscp = this.mscp
+      context.definition = this.definition
+      context.global = this.handlerGlobal
+      context.request = {path: apiPath, data: data, req: req}
+
+      if(typeof context.init === "function")
+        await context.init()
+
       if(namespace != null)
-        result = await this.handler[namespace][functionName].apply(this.handler, args);
+        result = await this.handler[namespace][functionName].apply(context, args);
       else
-        result = await this.handler[functionName].apply(this.handler, args);
+        result = await this.handler[functionName].apply(context, args);
     } catch (e) {
       console.log(e)
       return {

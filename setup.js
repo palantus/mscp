@@ -670,7 +670,7 @@ class Setup{
   async getServerDefinition(server){
     try{
       return await this.mscp.client.connectionManager.call(server, "")
-    } catch(err){}
+    } catch(err){console.log(err)}
     return null;
   }
   async readDefinition(){
