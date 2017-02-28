@@ -15,6 +15,8 @@ const path = require("path");
 })()
 ```
 
+The handler constructor argument for MSCP can be either a single class (no namespaces) or an object. If it is an object, then it maps namespaces to handler classes. The root handler is "".
+
 In your handler, you can access the context of the current reqest using the properties:
 - this.mscp: reference to mscp class
 - this.definition: reference to the definition.json file parsed as an object

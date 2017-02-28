@@ -33,10 +33,10 @@ div.menuitemfunction.selected{
   background-color: #550000;
 }
 
-#menuitems div.namespace div.menuitemfunction{display: none; padding-left: 10px;}
-#menuitems div.namespace.open div.menuitemfunction{display:block;}
-#menuitems div.namespace div.menuitemnamespace span.menuarrow {display: inline-block; margin-left: 10px; color: #aaa; content: ' ▾'; transition: all 0.2s linear;transform:rotate(-90deg); position:absolute; right:15px;}
-#menuitems div.namespace.open div.menuitemnamespace span.menuarrow{transform:rotate(0deg);}
+#menuitems div.group div.menuitemfunction{display: none; padding-left: 10px;}
+#menuitems div.group.open div.menuitemfunction{display:block;}
+#menuitems div.group div.menuitemgroup span.menuarrow {display: inline-block; margin-left: 10px; color: #aaa; content: ' ▾'; transition: all 0.2s linear;transform:rotate(-90deg); position:absolute; right:15px;}
+#menuitems div.group.open div.menuitemgroup span.menuarrow{transform:rotate(0deg);}
 
 #itemtitle{font-size: 120%; text-decoration: underline; margin-bottom: 10px;}
 
@@ -48,7 +48,8 @@ div.menuitemfunction.selected{
   padding-right: 10px;
   vertical-align: top;
 }
-div.function-call-arg-container input[type=text]{width: 300px;}
+div.function-call-arg-container input[type=text],
+div.function-call-arg-container input[type=number]{width: 300px;}
 
 .tooltiptext {
     visibility: hidden;
@@ -79,6 +80,7 @@ button {
   border: none;
   min-width: 70px;
   box-shadow: 0px 1px 3px #666666;
+  outline: none;
 }
 
 button:hover {

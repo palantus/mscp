@@ -70,7 +70,7 @@ class Setup{
             }
           }
         }
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -83,7 +83,7 @@ class Setup{
               this.setup.servers[i].websocket = data.websocket;
             }
           }
-          fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+          fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         }
         break;
 
@@ -131,7 +131,7 @@ class Setup{
           for(let i = 0; i < this.setup.servers.length; i++){
             if(this.setup.servers[i].id === data.id){
               this.setup.servers.splice(i, 1)
-              fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+              fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
             }
           }
         }
@@ -167,9 +167,9 @@ class Setup{
           if(this.setup.dependencyToServer == undefined)
             this.setup.dependencyToServer = {}
           for(let i = 0; i < deps.length; i++){
-            if(deps[i].name == data.name){
-              deps.splice(i, 1)
+            if(deps[i].name == data.name && deps[i].namespace == data.namespace){
               this.setup.dependencyToServer[(deps[i].namespace?deps[i].namespace+".":"")+deps[i].name] = undefined
+              deps.splice(i, 1)
             }
           }
           def.dependencies = deps;
@@ -186,7 +186,7 @@ class Setup{
           if(this.setup.dependencyToServer == undefined)
             this.setup.dependencyToServer = {}
           for(let i = 0; i < deps.length; i++){
-            if(deps[i].name == data.name){
+            if(deps[i].name == data.name && (deps[i].namespace == data.namespace || deps[i].namespace == data.oldNamespace)){
               deps[i].namespace = data.namespace
               if(data.serverId)
                 this.setup.dependencyToServer[(deps[i].namespace?deps[i].namespace+".":"")+deps[i].name] = data.serverId
@@ -513,7 +513,7 @@ class Setup{
           this.setup.accessRules = []
 
         this.setup.accessRules.push(data)
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -523,7 +523,7 @@ class Setup{
             this.setup.accessRules.splice(i, 1);
           }
         }
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -537,7 +537,7 @@ class Setup{
             this.setup.accessRules[i].require_access_key = data.require_access_key;
           }
         }
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -561,7 +561,7 @@ class Setup{
           }
         }
 
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -580,7 +580,7 @@ class Setup{
             break;
           }
         }
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -607,7 +607,7 @@ class Setup{
           }
         }
 
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -626,7 +626,7 @@ class Setup{
             break;
           }
         }
-        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), ()=>null)
+        fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
 
@@ -683,13 +683,13 @@ class Setup{
   async writeDefinition(def){
     try
     {
-      await new Promise(r => fs.writeFile("./definition.json", JSON.stringify(def, null, 4), (err)=>r()));
+      await new Promise(r => fs.writeFile("./definition.json", JSON.stringify(def, null, 2), (err)=>r()));
     } catch(err){}
   }
   async writeSetup(def){
     try
     {
-      await new Promise(r => fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 4), (err)=>r()));
+      await new Promise(r => fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), (err)=>r()));
     } catch(err){}
   }
 

@@ -57,8 +57,11 @@ function parseAndAddResponse(r, element, returnObjectAsRow){
 
   else {
     let ret = null;
-    if(typeof r === "string" && r.indexOf("\n")>= 0){
-      ret = `<pre>${r}</pre>`
+    if(typeof r === "boolean")
+      r = r === false ? "false" : "true"
+    let htmlEncodedStr = htmlEncode(r)
+    if(typeof r === "string" && htmlEncodedStr != r){
+      ret = `<pre>${htmlEncodedStr}</pre>`
     } else {
       ret = r;
     }
@@ -69,4 +72,11 @@ function parseAndAddResponse(r, element, returnObjectAsRow){
 
     element.append(ret)
   }
+}
+
+function htmlEncode(s){
+  var el = document.createElement("div");
+  el.innerText = el.textContent = s;
+  s = el.innerHTML;
+  return s;
 }

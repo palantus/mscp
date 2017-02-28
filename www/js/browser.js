@@ -4,6 +4,7 @@ class MSCP{
   async init(){
     this.apiPath = typeof MSCP_API_PATH === "string" ? MSCP_API_PATH : '/api'
     this.def = await this.apireq("")
+    this.mscp_request_include_always_parms = {}
 
     if(this.def.error !== undefined && localStorage.MSCPDefinition !== undefined){
       this.def = JSON.parse(localStorage.MSCPDefinition)
@@ -58,10 +59,11 @@ class MSCP{
   }
 
   async req(url, data = {}){
+    let reqData = jQuery.extend({}, data, this.mscp_request_include_always_parms);
     try{
       let response = await fetch(url, {
         method: 'post',
-        body: JSON.stringify(data),
+        body: JSON.stringify(reqData),
         credentials: 'include',
         headers: new Headers({
           'Content-Type': 'application/json'
@@ -71,7 +73,7 @@ class MSCP{
         let accessKey = prompt("You do not have access to this functionality. Enter an access key to continue.")
         if(accessKey){
           data.accessKey = accessKey;
-          return await this.req(url, data)
+          return await this.req(url, reqData)
         }
       }
       return await response.json();

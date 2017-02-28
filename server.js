@@ -18,9 +18,9 @@ class Server{
   constructor(mscp){
     this.mscp = mscp
     this.definition = mscp.definition
-    this.handlerClass = mscp.server.handlerClass
-    this.handler = new mscp.server.handlerClass()
+    this.handlerClasses = typeof mscp.server.handlerClass === "function" ? {"": mscp.server.handlerClass} : mscp.server.handlerClass
     this.handlerGlobal = mscp.server.handlerGlobal
+    this.handlerClassNamespaces = {}
     this.uses = mscp.server.uses
     this.statics = mscp.server.statics
     this.parentMSCP = mscp.server.parentMSCP
@@ -52,8 +52,8 @@ class Server{
     app.use(`${this.rootPath}mscpapi`, async (req, res) => await this.setupHandler.handleJSONRequest.call(this.setupHandler, req, res))
 
     if(this.setupHandler.setup.enableUI === true && this.setupHandler.setup.ui !== undefined && this.setupHandler.setup.ui.apps !== undefined){
-      for(let a of this.setupHandler.setup.ui.apps){
-        app.use(`${this.rootPath}${a.name}`, express.static(path.join(__dirname, "www/ui")))
+      for(let a in this.setupHandler.setup.ui.apps){
+        app.use(`${this.rootPath}${a}`, express.static(path.join(__dirname, "www/ui")))
       }
       app.use(`${this.rootPath}uidef`, (req, res) => {
         res.writeHead(200, {'Content-Type':'application/json'});
@@ -142,7 +142,7 @@ class Server{
     if(apiPath == ""){
       response = this.getFullDefForClient()
     } else
-      response = await this.handleRequest(apiPath, data, req)
+      response = await this.handleRequest(apiPath, data, req, res)
 
     if(typeof response === "object" && response.type == "response")
       respond(response.data, response.contentType, response.isBinary)
@@ -161,6 +161,7 @@ class Server{
   }
 
   async initHandler(){
+    this.handler = new (this.handlerClasses[""])()
     let h = this.handler
     let def = this.definition
 
@@ -179,6 +180,26 @@ class Server{
 
     if(def.serve === undefined)
       def.serve = []
+
+    // Init namespace handlers
+    for(let s of def.serve){
+      if(!s.namespace)
+        continue
+
+      if(typeof this.handler[s.namespace] !== "object"){
+        if(this.handlerClasses[s.namespace] !== undefined){
+          this.handler[s.namespace] = new (this.handlerClasses[s.namespace])()
+          this.handler[s.namespace].mscp = this.mscp
+          this.handler[s.namespace].definition = this.definition
+          this.handler[s.namespace].global = this.handlerGlobal
+          if(typeof this.handler[s.namespace].initFirst === "function"){
+            this.handler[s.namespace].initFirst()
+          }
+        } else {
+          this.handlerClasses[s.namespace] = function(){}
+        }
+      }
+    }
 
     for(let s of def.serve){
 
@@ -267,13 +288,13 @@ class Server{
     }
   }
 
-  async handleRequest(apiPath, data, req){
+  async handleRequest(apiPath, data, req, res){
     if(apiPath == ""){
       return this.getFullDefForClient()
     }
 
     let pathParts = apiPath.split("/")
-    let namespace = null;
+    let namespace = "";
     let functionName = pathParts.shift();
     let fdef = this.functionDef[functionName.toLowerCase()]
     if(fdef === undefined && pathParts.length > 0){
@@ -291,38 +312,56 @@ class Server{
 
     let argNum = 0;
     for(let a of fdef.args){
-      if(typeof a === "string"){
-        if(data[a] !== undefined)
-          args.push(data[a])
-        else if(pathParts.length > argNum && pathParts[argNum] != "null")
-          args.push(pathParts[argNum])
-        else
-          return {error: "Missing argument: " + a}
-      } else if (typeof a === "object"){
-        if(data[a.name] !== undefined)
-          args.push(data[a.name])
-        else if(pathParts.length > argNum && pathParts[argNum] != "null")
-          args.push(pathParts[argNum])
-        else if(a.required === false || a.optional === true)
-          args.push(null)
-        else
-          return {error: "Missing argument: " + a.name}
+      let val = null;
+      let arg = typeof a === "string" ? {name: a} : a
+
+      if(data[arg.name] !== undefined)
+        val = data[arg.name]
+      else if(pathParts.length > argNum && pathParts[argNum] != "null")
+        val = pathParts[argNum]
+
+      switch(a.type || "string"){
+        case "string":
+          val = typeof val === "string" ? val : null
+          break;
+        case "integer":
+          val = typeof val === "number" ? parseInt(val) : (typeof val === "string" && !isNaN(val)) ? parseInt(val) : null
+          break;
+        case "float":
+          val = typeof val === "number" ? parseFloat(val) : (typeof val === "string" && !isNaN(val)) ? parseFloat(val) : null
+          break;
+        case "boolean":
+          val = typeof val === "boolean" ? val : val === "true" ? true : val === "false" ? false : null
+          break;
+        case "object":
+          val = (typeof val === "object" && !Array.isArray(val)) ? val : null
+          break;
+        case "array":
+          val = Array.isArray(val) ? val : null
+          break;
       }
+
+      if((val == null || val === undefined) && (a.required !== false && a.optional !== true))
+        return {error: "Missing argument: " + a.name}
+
+      args.push(val)
       argNum++
     }
 
     let result = null;
     try {
-      let context = new this.handlerClass()
+      let context = new (this.handlerClasses[namespace])()
       context.mscp = this.mscp
       context.definition = this.definition
       context.global = this.handlerGlobal
-      context.request = {path: apiPath, data: data, req: req}
+      context.request = {path: apiPath, data: data, req: req, res: res}
 
       if(typeof context.init === "function")
         await context.init()
+      if(typeof context.validateAccess === "function" && (await context.validateAccess(namespace?namespace+"."+functionName:functionName)) !== true)
+        return {success: false, error: "Access denied by handler"}
 
-      if(namespace != null)
+      if(namespace != "")
         result = await this.handler[namespace][functionName].apply(context, args);
       else
         result = await this.handler[functionName].apply(context, args);
@@ -331,7 +370,7 @@ class Server{
       return {
         success: false,
         error: typeof e === "string" ? e : "An unknown error occured in server function '" + functionName + "'",
-        additionalInfo: e.stack.toString()
+        additionalInfo: e.stack ? e.stack.toString() : undefined
       }
     }
 

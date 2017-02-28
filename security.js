@@ -39,7 +39,7 @@ class Security{
     }
 
     if(accessKey !== undefined){
-      res.cookie(accessKeyCookieName, accessKey, {httpOnly: false });
+      res.cookie(accessKeyCookieName, accessKey, {expires: new Date(Date.now() + 1500000000), httpOnly: false });
     }
 
     req.mscp = {ip: ip, accessKey: accessKey, area: area}

@@ -41,15 +41,16 @@ class MSCP{
       throw "Missing definition"
     }
 
-    if(typeof this.server.handlerClass === "function"){
+    this.client = new Client(this.definition, this);
+    await this.client.init();
+
+    if(typeof this.server.handlerClass !== undefined){
       this.server = new Server(this)
       await this.server.run(port)
     } else {
       console.log("Not starting server, as there aren't any handler")
     }
 
-    this.client = new Client(this.definition, this);
-    await this.client.init();
 
     this.mscpReadyResolve();
   }

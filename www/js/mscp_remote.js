@@ -109,6 +109,7 @@ function initRemote(){
             showRecordsPerPageSelector: false,
             showFieldsSelector: true,
             columns: [
+                  //{title: "Namespace", dataKey: "namespace"},
                   {title: "Name", dataKey: "name"},
                   {title: "Arguments", dataKey: "arguments", width: "270px"}
                  ],

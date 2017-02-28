@@ -33,6 +33,7 @@ function initDeps(){
                 {name: "serverId", title: "Server ID"}
               ],
               onEdit: async function(oldRecord, newRecord, cb){
+                newRecord.oldNamespace = oldRecord.namespace
                 await req("update-dependency", newRecord);
                 cb();
               }
