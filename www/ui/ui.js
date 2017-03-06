@@ -84,6 +84,7 @@ class UI{
           groupContainer.addClass("open")
         }
 
+        functionDiv.html(`<span class="submenuindicator">-</span> ${functionDiv.html()}`)
         functionDiv.data("group", item.group)
         groupContainer.append(functionDiv);
       } else {

@@ -51,15 +51,31 @@ class Server{
     app.use(`${this.rootPath}mscp`, express.static(path.join(__dirname, "www")))
     app.use(`${this.rootPath}mscpapi`, async (req, res) => await this.setupHandler.handleJSONRequest.call(this.setupHandler, req, res))
 
-    if(this.setupHandler.setup.enableUI === true && this.setupHandler.setup.ui !== undefined && this.setupHandler.setup.ui.apps !== undefined){
-      for(let a in this.setupHandler.setup.ui.apps){
-        app.use(`${this.rootPath}${a}`, express.static(path.join(__dirname, "www/ui")))
+    if(this.setupHandler.setup.enableUI !== false){
+      let uiSetup = this.setupHandler.setup.ui
+      if(uiSetup === undefined || uiSetup.apps === undefined){
+
+        let uiSetupJSON = await new Promise((resolve, reject) => {
+          try{
+            fs.readFile("./ui.json", "utf-8", (err, data) => err?resolve(null):resolve(data))
+          } catch(err){
+            resolve(null)
+          }
+        })
+        if(uiSetupJSON)
+          uiSetup = JSON.parse(uiSetupJSON)
       }
-      app.use(`${this.rootPath}uidef`, (req, res) => {
-        res.writeHead(200, {'Content-Type':'application/json'});
-        res.end(JSON.stringify(this.setupHandler.setup.ui, null, 2))
-      })
-      app.use(`${this.rootPath}mscpui/static`, express.static(path.join(__dirname, "www/ui")))
+
+      if(uiSetup){
+        for(let a in uiSetup.apps){
+          app.use(`${this.rootPath}${a}`, express.static(path.join(__dirname, "www/ui")))
+        }
+        app.use(`${this.rootPath}uidef`, (req, res) => {
+          res.writeHead(200, {'Content-Type':'application/json'});
+          res.end(JSON.stringify(uiSetup, null, 2))
+        })
+        app.use(`${this.rootPath}mscpui/static`, express.static(path.join(__dirname, "www/ui")))
+      }
     }
 
     for(let use of this.uses)

@@ -1,5 +1,5 @@
 body,html{margin: 0px; height: 100%; background-color: #333333;}
-#content-wrapper{display: flex; height: 100%;}
+#content-wrapper{display: flex; min-height: 100%;}
 #menu{flex-grow: 1; flex: 0 0 12em;}
 @media only screen and (max-device-width: 750px) {
   #menu{display: none;}
@@ -33,7 +33,7 @@ div.menuitemfunction.selected{
   background-color: #550000;
 }
 
-#menuitems div.group div.menuitemfunction{display: none; padding-left: 10px;}
+#menuitems div.group div.menuitemfunction{display: none; padding-left: 7px;}
 #menuitems div.group.open div.menuitemfunction{display:block;}
 #menuitems div.group div.menuitemgroup span.menuarrow {display: inline-block; margin-left: 10px; color: #aaa; content: ' ▾'; transition: all 0.2s linear;transform:rotate(-90deg); position:absolute; right:15px;}
 #menuitems div.group.open div.menuitemgroup span.menuarrow{transform:rotate(0deg);}
