@@ -25,14 +25,16 @@ class MSCP{
 
   _addDependency(s){
     let obj = this;
+    let objKey = s.name;
     if(s.namespace){
       if(this[s.namespace] === undefined){
         this[s.namespace] = {}
       }
-      obj = this[s.namespace];
+      objKey = `${s.namespace}.${s.name}`
+      this[s.namespace][s.name] = (...args) => this[objKey].apply(this, args);
     }
 
-    obj[s.name] = async function(...args){
+    this[objKey] = async function(...args){
       let data = {}
       let i = 0
       for(let i = 0; i < s.args.length && i < args.length; i++){
