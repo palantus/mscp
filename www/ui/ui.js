@@ -104,7 +104,6 @@ class UI{
 
   onGroupClick(){
     let group = $(this).data("group");
-    console.log(`#menuitems div.group[data-group="${group}"]`)
     $(`#menuitems div.group[data-group="${group}"]`).toggleClass("open")
     $(`#menuitems div.group[data-group="${group}"] div.menuitemgroup`).toggleClass("selected")
   }

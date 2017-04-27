@@ -372,7 +372,7 @@ class Setup{
         def = await this.readDefinition()
         if(def.serve !== undefined){
           for(let f of def.serve){
-            if(f.name == data.name){
+            if(f.name == data.name && (!data.namespace || data.namespace == f.namespace)){
               response = f.args != undefined ? f.args : []
             }
           }
@@ -389,7 +389,7 @@ class Setup{
           let serve = def.serve !== undefined ? def.serve : []
           let alreadyExists = false
           for(let i = 0; i < serve.length; i++){
-            if(serve[i].name == serveName){
+            if(serve[i].name == serveName && (!data.servenamespace || data.servenamespace == serve[i].namespace)){
               if(serve[i].args === undefined)
                 serve[i].args = [];
 
@@ -413,12 +413,13 @@ class Setup{
       case "remove-serve-argument":
         serveName = data.servename
         arg = data.record
+        //try{
         if(arg && typeof arg.name !== undefined && arg.name != ""){
           def = await this.readDefinition()
           let serve = def.serve !== undefined ? def.serve : []
           let alreadyExists = false
           for(let i = 0; i < serve.length; i++){
-            if(serve[i].name == serveName && serve[i].args !== undefined){
+            if(serve[i].name == serveName && serve[i].args !== undefined && (!data.servenamespace || data.servenamespace == serve[i].namespace)){
               for(let a = 0; a < serve[i].args.length; a++){
                 if(typeof serve[i].args[a] === "string")
                   serve[i].args[a] = {name: serve[i].args[a]};
@@ -431,6 +432,7 @@ class Setup{
           def.serve = serve;
           await this.writeDefinition(def);
         }
+        //} catch(err){console.log(err)}
         break;
 
       case "update-serve-argument":
@@ -441,7 +443,7 @@ class Setup{
           let serve = def.serve !== undefined ? def.serve : []
           let alreadyExists = false
           for(let i = 0; i < serve.length; i++){
-            if(serve[i].name == serveName && serve[i].args !== undefined){
+            if(serve[i].name == serveName && serve[i].args !== undefined && (!data.servenamespace || data.servenamespace == serve[i].namespace)){
               for(let a = 0; a < serve[i].args.length; a++){
                 if(serve[i].args[a].name == arg.name || serve[i].args[a].name == arg.oldName){
                   serve[i].args[a].name = arg.name;

@@ -112,13 +112,13 @@ function initServe(){
         ],
         validate: function(record){return record.name !== ""},
         onCreate: async function(record, cb){
-          await req("add-serve-argument", {servename: curSelectedServe.name, record: record});
+          await req("add-serve-argument", {servename: curSelectedServe.name, servenamespace: curSelectedServe.namespace, record: record});
           cb();
           refreshServe();
         }
       },
       deleteRecord: {
-        onDelete: async function(record, cb){await req("remove-serve-argument", {servename: curSelectedServe.name, record: record});cb();refreshServe();}
+        onDelete: async function(record, cb){await req("remove-serve-argument", {servename: curSelectedServe.name, servenamespace: curSelectedServe.namespace, record: record});cb();refreshServe();}
       },
       editRecord: {
         fields: [
@@ -131,7 +131,7 @@ function initServe(){
         validate: function(oldRecord, newRecord){return newRecord.name !== "";},
         onEdit: async function(oldRecord, newRecord, cb){
           newRecord.oldName = oldRecord.name;
-          await req("update-serve-argument", {servename: curSelectedServe.name, record: newRecord});
+          await req("update-serve-argument", {servename: curSelectedServe.name, servenamespace: curSelectedServe.namespace, record: newRecord});
           cb();
           refreshServe();
         }
@@ -141,7 +141,7 @@ function initServe(){
 
   var curSelectedServe = null;
   var showServe = function(serve){
-     $("#servecurrentfunctionname").html(serve.name)
+     $("#servecurrentfunctionname").html((serve.namespace?serve.namespace+".":"") + serve.name)
      $("#selectedservecontainer").fadeIn();
      curSelectedServe = serve;
      tcSelectedServe.reloadData();
