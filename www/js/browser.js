@@ -74,8 +74,10 @@ class MSCP{
       if(response.status == 403){
         let accessKey = prompt("You do not have access to this functionality. Enter an access key to continue.")
         if(accessKey){
-          data.accessKey = accessKey;
+          reqData.accessKey = accessKey;
           return await this.req(url, reqData)
+        } else {
+          throw "No AccessKey entered"
         }
       }
       return await response.json();
