@@ -46,7 +46,18 @@ class MSCP{
         }
       }
 
-      var response = await this.apireq((s.namespace ? s.namespace + "/" : "") + s.name, data);
+      let command = (s.namespace ? s.namespace + "/" : "") + s.name;
+
+      if(s.returntype == "download"){
+        let args = []
+        for(let a in data){
+          args.push(`${a}=${data[a]}`)
+        }
+        window.location = `${this.apiPath}/${command}?${args.join("&")}`
+        return;
+      }
+
+      var response = await this.apireq(command, data);
       if(response.success === true)
         return response.result;
       else {
