@@ -157,13 +157,21 @@ class Server{
 
     if(apiPath == ""){
       response = this.getFullDefForClient()
-    } else
+    } else {
       response = await this.handleRequest(apiPath, data, req, res)
+    }
 
-    if(typeof response === "object" && response.type == "response")
+    if(typeof response === "object" && response.type == "download" && typeof response.file.path == "string"){
+      let file = response.file
+      let responseFilename = file.name ? file.name : path.basename(file.path)
+      res.download(file.path, responseFilename)
+
+    } else if(typeof response === "object" && response.type == "response"){
       respond(response.data, response.contentType, response.isBinary)
-    else
+
+    } else if(typeof response !== "object" || response.type != "custom"){
       respond(response)
+    }
   }
 
   getFullDefForClient(){
@@ -394,7 +402,20 @@ class Server{
       return {success: false, error: result.error, result: result}
     }
 
-    return {success: true, result: result !== undefined ? result : null}
+    let ret = {success: true, result: result !== undefined ? result : null}
+
+    if(fdef.returntype == "download"){
+      ret.type = "download"
+      if(typeof result === "string"){
+        ret.file = {path: result}
+      } else if(typeof result === "object" && typeof result.path === "string"){
+        ret.file = result
+      }
+    } else if(fdef.returntype == "custom"){
+      ret.type = "custom"
+    }
+
+    return ret
   }
 }
 
