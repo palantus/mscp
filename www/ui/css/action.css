@@ -1,0 +1,19 @@
+
+#content > div.itemcontainer{padding: 15px; /*display: none;*/}
+
+.function-call-arg-container:hover .tooltiptext:not(:empty), .function-call-arg-container input:focus + .tooltiptext:not(:empty) {
+    visibility: visible;
+}
+
+#content > div.itemcontainer > .itemtitle{font-size: 120%; text-decoration: underline; margin-bottom: 10px;}
+
+/* Function call args */
+.function-call-container button{margin-top: 10px;}
+.function-call-arg-container span.function-call-arg-name{
+  min-width: 100px;
+  display: inline-block;
+  padding-right: 10px;
+  vertical-align: top;
+}
+div.function-call-arg-container input[type=text],
+div.function-call-arg-container input[type=number]{width: 300px;}

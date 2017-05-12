@@ -8,7 +8,6 @@ body,html{margin: 0px; height: 100%; background-color: #333333;}
 #title{margin: 0px;margin-left: 10px; padding-top: 0.4em; color: white; font-size: 180%; display: inline-block;}
 #menutop, #titlebar{height: 4em;background-color: #333333;}
 #hamburger{color: white; font-size: 150%; text-decoration: none; cursor: pointer; padding-left: 5px;tap-highlight-color: rgba(0,0,0,0); -webkit-tap-highlight-color: rgba(255, 255, 255, 0); user-select: none;}
-#itemcontainer{padding: 15px; display: none;}
 
 div.menuitem{
   /*background-image: linear-gradient(to bottom, #222222, #111111);*/
@@ -38,18 +37,6 @@ div.menuitemfunction.selected{
 #menuitems div.group div.menuitemgroup span.menuarrow {display: inline-block; margin-left: 10px; color: #aaa; content: ' ▾'; transition: all 0.2s linear;transform:rotate(-90deg); position:absolute; right:15px;}
 #menuitems div.group.open div.menuitemgroup span.menuarrow{transform:rotate(0deg);}
 
-#itemtitle{font-size: 120%; text-decoration: underline; margin-bottom: 10px;}
-
-/* Function call args */
-#function-call-execute{margin-top: 10px;}
-.function-call-arg-container span.function-call-arg-name{
-  min-width: 100px;
-  display: inline-block;
-  padding-right: 10px;
-  vertical-align: top;
-}
-div.function-call-arg-container input[type=text],
-div.function-call-arg-container input[type=number]{width: 300px;}
 
 .tooltiptext {
     visibility: hidden;
@@ -61,9 +48,6 @@ div.function-call-arg-container input[type=number]{width: 300px;}
     max-width: 400px;
     position: absolute;
     z-index: 1;
-}
-.function-call-arg-container:hover .tooltiptext:not(:empty), .function-call-arg-container input:focus + .tooltiptext:not(:empty) {
-    visibility: visible;
 }
 
 /* Buttons */

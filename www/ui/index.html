@@ -8,13 +8,17 @@
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 
-  <link rel="stylesheet" type="text/css" href="/mscpui/static/ui.css" />
-  <link rel="stylesheet" type="text/css" href="/mscp/apibrowser/response2html.css" />
+  <link rel="stylesheet" type="text/css" href="/mscpui/static/css/ui.css" />
+  <link rel="stylesheet" type="text/css" href="/mscpui/static/css/action.css" />
+  <link rel="stylesheet" type="text/css" href="/mscpui/static/css/result.css" />
+  <link rel="stylesheet" type="text/css" href="/mscp/libs/css/notifier.css" />
 
 	<script src="/mscp/libs/js/jquery.min.js"></script>
 	<script src="/mscp/js/browser.js"></script>
-	<script src="/mscpui/static/ui.js"></script>
-	<script src="/mscp/apibrowser/response2html.js"></script>
+	<script src="/mscpui/static/js/ui.js"></script>
+	<script src="/mscpui/static/js/action.js"></script>
+	<script src="/mscpui/static/js/result.js"></script>
+	<script src="/mscp/libs/js/notifier.js"></script>
 </head>
 <body>
 <div id="content-wrapper">
@@ -29,17 +33,13 @@
       <span id="hamburger">&#9776;</span>
       <span id="title"></span>
     </div>
-    <div id="itemcontainer">
-      <div id="itemtitle"></div>
+  </div>
+  <div id="floatingactionbar" class="popup hidden">
+    <div>
+      <div id="floatingactionbar-actions">
 
-      <div id="function-call-container">
-        <div id="function-call-args">
-        </div>
-        <button id="function-call-execute">Go</button>
-          <div id="function-call-results"></div>
       </div>
     </div>
-
   </div>
 </div>
 </body>
