@@ -134,8 +134,8 @@ class ResultParser{
 
     let serverAction = ui.actions[action.call];
 
-    if(!serverAction && ui.items[action.call]){
-      let item = ui.items[action.call]
+    if(!serverAction){
+      let item = ui.items[action.call] || {}
       if(!item.name)
         item.name = action.call
       if(item.name.indexOf(".")>0)
