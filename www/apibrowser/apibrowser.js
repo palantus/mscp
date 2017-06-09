@@ -62,6 +62,7 @@ function onFunctionClick(){
     $("#function-call-args").empty();
   } else {
     $("#no-args-message").hide();
+    $("#function-args").show();
     $("#function-args tbody").empty();
     $("#function-args tbody").show();
 
