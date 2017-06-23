@@ -141,6 +141,8 @@ class ResultParser{
       if(item.name.indexOf(".")>0)
         [item.namespace, item.name] = item.name.split(".");
 
+      item.autorun = item.autorun || action.run;
+
       serverAction = {};
       serverAction.item = item;
       serverAction.serve = mscp.def.serve.find((serv) => serv.namespace ? (serv.name == serverAction.item.name && serv.namespace == serverAction.item.namespace) : serv.name == serverAction.item.name);
@@ -176,9 +178,6 @@ class ResultParser{
         break;
       default:
         ah.show();
-        if(action.run !== false){
-          ah.run();
-        }
     }
 
   }

@@ -1,6 +1,6 @@
 {
   "name": "mscp",
-  "version": "1.2.26",
+  "version": "1.2.27",
   "main": "mscp.js",
   "repository" : "palantus/mscp",
   "License" : "MIT",
