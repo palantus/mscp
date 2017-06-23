@@ -176,7 +176,9 @@ class ResultParser{
         break;
       default:
         ah.show();
-        ah.run();
+        if(action.run !== false){
+          ah.run();
+        }
     }
 
   }
