@@ -141,13 +141,14 @@ class ResultParser{
       if(item.name.indexOf(".")>0)
         [item.namespace, item.name] = item.name.split(".");
 
-      item.autorun = item.autorun || action.run;
-
       serverAction = {};
       serverAction.item = item;
       serverAction.serve = mscp.def.serve.find((serv) => serv.namespace ? (serv.name == serverAction.item.name && serv.namespace == serverAction.item.namespace) : serv.name == serverAction.item.name);
       serverAction.title = serverAction.item.title || serverAction.serve.title || ""
     }
+
+    if(serverAction.item.autorun !== false && action.autorun !== false)
+      serverAction.item.autorun = true;
 
     if(!serverAction){
       alert("Invalid call action")
