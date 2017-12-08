@@ -10,6 +10,7 @@ const path = require("path")
 const fs = require("fs")
 const WebSocket = require('ws')
 const SecurityHandler = require("./security.js")
+const fileUpload = require('express-fileupload');
 
 //Run using --harmony-async-await on node version 7+
 
@@ -41,6 +42,7 @@ class Server{
       app = express()
       app.use(bodyParser.urlencoded({ extended: true }))
       app.use(bodyParser.json())
+      app.use(fileUpload())
       app.use(cookieParser());
       app.use(async (req, res, next) => await this.security.onRequest.call(this.security, req, res, next));
     }
