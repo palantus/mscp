@@ -41,8 +41,8 @@ class Server{
     } else {
       app = express()
       app.use(fileUpload())
-      app.use(bodyParser.urlencoded({ extended: true }))
-      app.use(bodyParser.json())
+      app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }))
+      app.use(bodyParser.json({limit: '500mb'}))
       app.use(cookieParser());
       app.use(async (req, res, next) => await this.security.onRequest.call(this.security, req, res, next));
     }
