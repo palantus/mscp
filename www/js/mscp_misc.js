@@ -12,7 +12,8 @@ async function initMisc(){
       https_ca: $("#https_ca").val(),
       api_access_scheme: $("#api_access_scheme").val(),
       manage_access_scheme: $("#manage_access_scheme").val(),
-      static_access_scheme: $("#static_access_scheme").val()
+      static_access_scheme: $("#static_access_scheme").val(),
+      attemptAPIOnUnresolvedPaths: $("#attemptAPIOnUnresolvedPaths").is(':checked'),
     });
   })
 
@@ -28,6 +29,7 @@ async function initMisc(){
   $("#api_access_scheme").val(info.api_access_scheme);
   $("#manage_access_scheme").val(info.manage_access_scheme);
   $("#static_access_scheme").val(info.static_access_scheme);
+  $("#attemptAPIOnUnresolvedPaths").prop('checked', info.attemptAPIOnUnresolvedPaths);
 }
 
 $(function() {

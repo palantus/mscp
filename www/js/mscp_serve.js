@@ -17,7 +17,8 @@ function initServe(){
                   {title: "Title", dataKey: "title"},
                   {title: "Arguments", dataKey: "arguments", width: "270px"},
                   {title: "Description", dataKey: "description"},
-                  {title: "Return type", dataKey: "returntype"}
+                  {title: "Return type", dataKey: "returntype"},
+                  {title: "Default", dataKey: "default"}
                  ],
             dataSource: async function(onData){
                let response = await req('get-serve');
@@ -33,7 +34,8 @@ function initServe(){
                 {name: "title", title: "Title", placeholder: "optional"},
                 {name: "description", title: "Description", type: "textarea"},
                 {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect},
-                {name: "namespace", title: "Namespace"}
+                {name: "namespace", title: "Namespace"},
+                {name: "default", title: "Default for", type: "select", values: httpOperationsForSelect}
               ],
               validate: function(record){return record.name !== ""},
               onCreate: async function(record, cb){
@@ -50,7 +52,8 @@ function initServe(){
                 {name: "title", title: "Title", placeholder: "optional"},
                 {name: "description", title: "Description", type: "textarea"},
                 {name: "returntype", title: "Return type", type: "select", values: dataTypesForSelect},
-                {name: "namespace", title: "Namespace"}
+                {name: "namespace", title: "Namespace"},
+                {name: "default", title: "Default for", type: "select", values: httpOperationsForSelect}
               ],
               validate: function(oldRecord, newRecord){return newRecord.name !== "";},
               onEdit: async function(oldRecord, newRecord, cb){

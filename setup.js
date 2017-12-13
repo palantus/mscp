@@ -277,6 +277,9 @@ class Setup{
         if(typeof data.static_access_scheme === "string")
           this.setup.static_access_scheme = data.static_access_scheme
 
+        if(typeof data.attemptAPIOnUnresolvedPaths === "boolean")
+          this.setup.attemptAPIOnUnresolvedPaths = data.attemptAPIOnUnresolvedPaths
+
         await this.writeSetup()
 
         response = {}
@@ -356,6 +359,7 @@ class Setup{
               serve[i].description = data.description;
               serve[i].returntype = data.returntype;
               serve[i].namespace = data.namespace;
+              serve[i].default = data.default;
             }
           }
           def.serve = serve;

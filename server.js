@@ -86,6 +86,10 @@ class Server{
     for(let s of this.statics)
       app.use(`${s.rootPath}`, express.static(s.wwwPath))
 
+    if(this.setupHandler.setup.attemptAPIOnUnresolvedPaths === true){
+      app.use(async (req, res) => await this.handleAPIRequest(req, res));
+    }
+
     if(this.parentMSCP !== undefined){
       return; //Do not setup server, if there is a parent
     }
@@ -133,7 +137,6 @@ class Server{
       res.end("Invalid request!");
       return;
     }
-
     var apiPath = url.parse(req.url).pathname.substring(1);
 
     var respond = (result, contentType, isBinary) => {
@@ -320,15 +323,58 @@ class Server{
     }
 
     let pathParts = apiPath.split("/")
-    let namespace = "";
-    let functionName = pathParts.shift();
-    let fdef = this.functionDef[functionName.toLowerCase()]
-    if(fdef === undefined && pathParts.length > 0){
-      namespace  = functionName
-      functionName = pathParts.shift()
-      fdef = this.functionDef[namespace.toLowerCase() + '.' + functionName.toLowerCase()]
+    let namespace = ""
+    let functionName = ""
+    let fdef = null
+
+    let def = this.definition.serve;
+
+    // First look for explicit namespace
+    if(pathParts.length > 0){
+      for(let s of def){
+        if(s.namespace == pathParts[0]){
+          namespace = s.namespace
+          pathParts.shift()
+          break;
+        }
+      }
+
+      // Then find function - first look for explicit function
+      for(let s of def){
+        if(s.name.toLowerCase() == pathParts[0].toLowerCase()){
+          functionName = s.name
+          pathParts.shift()
+          break;
+        }
+      }
     }
-    if(fdef === undefined){
+
+    //Finally look for functions which are default for a HTTP method
+    if(!functionName){
+      for(let s of def){
+        if(!s.default)
+          continue
+
+        if(namespace){
+          if(!s.namespace || namespace.toLowerCase() != s.namespace.toLowerCase()){
+            continue;
+          }
+        }
+        if(s.default.toLowerCase() == req.method.toLowerCase()){
+          functionName = s.name
+          break;
+        }
+      }
+    }
+
+    if(functionName){
+      if(namespace)
+        fdef = this.functionDef[namespace.toLowerCase() + '.' + functionName.toLowerCase()]
+      else
+        fdef = this.functionDef[functionName.toLowerCase()]
+    }
+
+    if(fdef == null){
       return {error: "Unknown function " + functionName, functionName: functionName}
     }
 

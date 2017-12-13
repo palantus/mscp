@@ -73,6 +73,7 @@ async function req(_command, _data){
 }
 
 var dataTypesForSelect = ["string", "integer", "float", "boolean", "object", "array", "download", "custom", "*"];
+var httpOperationsForSelect = ["", "get", "post", "delete", "put"]
 
 function getUrlVar( name ){
     name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
