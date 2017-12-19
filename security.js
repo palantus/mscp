@@ -16,7 +16,13 @@ class Security{
   }
 
   async onRequest(req, res, next){
-    let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    let ip = '';
+    if(this.setup.useForwardedHeader === true)
+      ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    else if(this.setup.useRealIPHeader === true)
+      ip = req.headers['x-real-ip'] || req.connection.remoteAddress;
+    else
+      ip = req.connection.remoteAddress;
 
     var data = req.body;
     if(data === undefined || (Object.keys(data).length === 0 && data.constructor === Object))

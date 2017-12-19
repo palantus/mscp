@@ -44,3 +44,8 @@ async function myFunction(){
 
 You need note 7+ and (if version < 8) the node flag ```--harmony-async-await```.
 For the browser client, you need Chrome 56 or Firefox 52 (for async/await).
+
+## Setup parameters
+
+- useForwardedHeader: If set to true, then the security module will check the headers for 'x-forwarded-for' header to get the IP of the client, instead of the proxy server. Only use this, if you are behind a proxy that sets this variable.
+- useRealIPHeader: If set to true, then the security module will check the headers for 'x-real-ip' header to get the IP of the client, instead of the proxy server. Only use this, if you are behind a proxy that sets this variable.
