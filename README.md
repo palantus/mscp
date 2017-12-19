@@ -47,5 +47,6 @@ For the browser client, you need Chrome 56 or Firefox 52 (for async/await).
 
 ## Setup parameters
 
+- trustProxy: Instructs Express to trust the proxy that sent the request. Only use, when you are behind a proxy that you trust.
 - useForwardedHeader: If set to true, then the security module will check the headers for 'x-forwarded-for' header to get the IP of the client, instead of the proxy server. Only use this, if you are behind a proxy that sets this variable.
 - useRealIPHeader: If set to true, then the security module will check the headers for 'x-real-ip' header to get the IP of the client, instead of the proxy server. Only use this, if you are behind a proxy that sets this variable.

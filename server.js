@@ -40,6 +40,11 @@ class Server{
       app = this.parentMSCP.server
     } else {
       app = express()
+
+      if(this.setupHandler.setup.trustProxy === true){
+        app.enable('trust proxy')
+      }
+
       app.use(fileUpload())
       app.use(bodyParser.urlencoded({extended: true }))
       app.use(bodyParser.json())

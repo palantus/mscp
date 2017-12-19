@@ -17,7 +17,9 @@ class Security{
 
   async onRequest(req, res, next){
     let ip = '';
-    if(this.setup.useForwardedHeader === true)
+    if(this.setup.trustProxy === true)
+      ip = req.ip
+    else if(this.setup.useForwardedHeader === true)
       ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     else if(this.setup.useRealIPHeader === true)
       ip = req.headers['x-real-ip'] || req.connection.remoteAddress;
