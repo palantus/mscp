@@ -175,7 +175,10 @@ class ResultParser{
         let result = await ah.run();
         if(typeof result === "object" || Array.isArray(result))
           result = JSON.stringify(result);
-        notify(result);
+        if(action.notifytimeout)
+          notify(result, action.notifytimeout);
+        else
+          notify(result, 5000);
         break;
       default:
         ah.show();
