@@ -13,7 +13,7 @@ class ResultParser{
     return this.parseInner(this.result, this.element, "")
   }
 
-  parseInner(r, element, path, returnObjectAsRow){
+  parseInner(r, element, path, returnObjectAsRow, columnNames){
     if(Array.isArray(r)){
       let tab = $("<table></table>", {class: "result-array"})
 
@@ -34,7 +34,7 @@ class ResultParser{
         }
 
         for(let d of r){
-          this.parseInner(d, tab, this.addToPath(path, "<row>"), true)
+          this.parseInner(d, tab, this.addToPath(path, "<row>"), true, columnNames)
         }
 
         element.append(tab)
@@ -43,7 +43,8 @@ class ResultParser{
 
     else if(typeof r === "object" && returnObjectAsRow === true){
       let row = $("<tr></tr>")
-      for(let n in r){
+      //for(let n in r){
+      for(let n of columnNames){
         let cell = $("<td></td>");
         this.parseInner(r[n], cell, this.addToPath(path, n));
         row.append(cell)

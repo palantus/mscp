@@ -298,7 +298,8 @@ class Setup{
           https_ca: this.setup.https_ca || "",
           api_access_scheme: this.setup.api_access_scheme || "full_access",
           manage_access_scheme: this.setup.manage_access_scheme || "full_access",
-          static_access_scheme: this.setup.static_access_scheme || "full_access"
+          static_access_scheme: this.setup.static_access_scheme || "full_access",
+          attemptAPIOnUnresolvedPaths: this.setup.static_access_scheme || false
         }
         break;
 
