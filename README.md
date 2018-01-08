@@ -50,3 +50,45 @@ For the browser client, you need Chrome 56 or Firefox 52 (for async/await).
 - trustProxy: Instructs Express to trust the proxy that sent the request. Only use, when you are behind a proxy that you trust.
 - useForwardedHeader: If set to true, then the security module will check the headers for 'x-forwarded-for' header to get the IP of the client, instead of the proxy server. Only use this, if you are behind a proxy that sets this variable.
 - useRealIPHeader: If set to true, then the security module will check the headers for 'x-real-ip' header to get the IP of the client, instead of the proxy server. Only use this, if you are behind a proxy that sets this variable.
+
+## Sample simple UI
+
+
+```
+TBD
+```
+
+## Sample UI Setup, with a single function as entry:
+
+```
+{
+  "apps": {
+    "": {"title": "Starter", "items": ["services", "kill", "log"], "defaultIndex": 0, "showMenu": false}
+  },
+  "items": {
+    "services": {
+      "title":" List services",
+      "autorun": true,
+      "actions":{
+        "<row>": [
+          {"call": "log", "title": "View log", "args": {"name": "active.name"}},
+          {"call": "setup", "title": "Show setup", "args": {"name": "active.name"}},
+          {"call": "gitpull", "title": "Execute: git pull", "args": {"name": "active.name"}, "ui": "notify-result", "notifytimeout": 7000},
+          {"call": "npminstall", "title": "Execute: npm install", "args": {"name": "active.name"}, "ui": "notify-result", "notifytimeout": 7000},
+          {"call": "kill", "title": "Force stop", "args": {"name": "active.name"}, "ui": "notify-result"},
+          {"call": "enableService", "title": "Enable", "args": {"name": "active.name"}, "ui": "notify-result"},
+          {"call": "disableService", "title": "Disable", "args": {"name": "active.name"}, "ui": "notify-result"},
+          {"type": "link", "url": "<curhostnoport>:<active.http_port>/mscp", "title": "Open: MSCP Setup"},
+          {"type": "link", "url": "<curhostnoport>:<active.http_port>/api/browse", "title": "Open: API Browser"},
+          {"type": "link", "url": "<curhostnoport>:<active.http_port>", "title": "Open: Root"}
+        ],
+        "": [
+          {"type": "link", "item": "services", "title": "Refresh"}
+        ]
+      }
+    },
+    "log": {"title":"Get log"},
+    "kill": {"title":"Restart service"}
+  }
+}
+```

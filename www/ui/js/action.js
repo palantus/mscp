@@ -27,7 +27,7 @@ class ActionHandler{
                         <div class="function-call-container">
                           <div class="function-call-args"></div>
                           ${this.parentHandler ? '<button class="function-call-back">Back</button>' : ""}
-                          ${this.item.item.autorun === true ? "" : '<button class="function-call-execute">Go</button>'}
+                          <button class="function-call-execute">${this.item.item.autorun === true ? "Rerun" : "Go"}</button>
                           <div class="function-call-results"></div>
                         </div>
                       </div>`)

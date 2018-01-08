@@ -62,7 +62,7 @@ class Security{
       next(); //Always allowed
     } else if(this.validate(req.path, data, area, ip, accessKey)){
       next()
-    } else if(req.get("Accept").indexOf("text/html") >= 0){
+    } else if(req.get("Accept") !== undefined && req.get("Accept").indexOf("text/html") >= 0){
       res.writeHead(200, "text/html");
       res.end(this.accessKeyPromptHTMLPage)
       console.log("Denied request for " + req.path + " from IP " + ip + (accessKey !== undefined ? " and access key \"" + accessKey + "\"" : ""))
