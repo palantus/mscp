@@ -11,6 +11,7 @@ const fs = require("fs")
 const WebSocket = require('ws')
 const SecurityHandler = require("./security.js")
 const fileUpload = require('express-fileupload');
+const js2xmlparser = require('js2xmlparser')
 
 //Run using --harmony-async-await on node version 7+
 
@@ -146,17 +147,21 @@ class Server{
 
     var respond = (result, contentType, isBinary) => {
       if(result !== null && result !== undefined){
-        if(contentType === undefined)
-          res.writeHead(200, {'Content-Type':'application/json'});
-        else
-          res.writeHead(200, {'Content-Type': contentType});
+        let cType = contentType === undefined ? 'application/json' : contentType
 
-        if(typeof result == "string")
+        if(typeof result == "string"){
+          res.writeHead(200, {'Content-Type': cType});
           res.end(result);
-        else if(typeof result == "object" && isBinary)
+        } else if(typeof result == "object" && isBinary){
+          res.writeHead(200, {'Content-Type': cType});
           res.end(result, 'binary')
-        else
+        } else if(data.responseType === 'xml'){
+          res.writeHead(200, {'Content-Type': 'text/xml'});
+          res.end(js2xmlparser.parse("root", result))
+        } else {
+          res.writeHead(200, {'Content-Type': cType});
           res.end(JSON.stringify(result, null, 2));
+        }
       } else {
         res.writeHead(200, {'Content-Type':'application/json'});
         res.end(JSON.stringify({error: "Invalid response. Server Error. ", apiPath: apiPath, data: data, baseUrl: req.baseUrl}, null, 2));

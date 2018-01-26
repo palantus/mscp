@@ -1,6 +1,6 @@
 {
   "name": "mscp",
-  "version": "1.2.38",
+  "version": "1.2.39",
   "main": "mscp.js",
   "repository": "palantus/mscp",
   "License": "MIT",
@@ -10,15 +10,16 @@
   },
   "dependencies": {
     "body-parser": "*",
+    "commander": "*",
     "cookie-parser": "*",
     "express": "*",
-    "request": "*",
-    "node-uuid": "*",
-    "commander": "*",
-    "ws": "*",
-    "spdy": "*",
+    "express-fileupload": "*",
+    "js2xmlparser": "^3.0.0",
     "mscp-browserlibs": "*",
-    "express-fileupload": "*"
+    "node-uuid": "*",
+    "request": "*",
+    "spdy": "*",
+    "ws": "*"
   },
   "bin": {
     "mscp": "./cli.js"

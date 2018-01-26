@@ -92,3 +92,7 @@ TBD
   }
 }
 ```
+
+## Reserved URL parameters:
+- accessKey: used when securing (som parts of) the server with access keys
+- responseType: can be used to set response type to XML instead of JSON
