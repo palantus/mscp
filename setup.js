@@ -150,7 +150,7 @@ class Setup{
           this.setup.dependencyToServer = {}
         for(let d of deps){
           let serverId = this.setup.dependencyToServer[(d.namespace?d.namespace+".":"")+d.name]
-          for(let i = 0; i < this.setup.servers.length; i++){
+          for(let i = 0; i < (this.setup.servers || []).length; i++){
             if(this.setup.servers[i].id === serverId){
               d.serverId = serverId
               d.serverName = this.setup.servers[i].name
