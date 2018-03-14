@@ -43,6 +43,12 @@ class Client{
     }
   }
 
+  async reload(){
+    this.definition = this.mscp.definition;
+    this._initFromDefinition();
+    await this.init()
+  }
+
   async loadAllDefinitions(){
     let promises = []
     let servers = this.setupHandler.setup.servers || []

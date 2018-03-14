@@ -20,14 +20,20 @@ class Server{
   constructor(mscp){
     this.mscp = mscp
     this.definition = mscp.definition
-    this.handlerClasses = typeof mscp.server.handlerClass === "function" ? {"": mscp.server.handlerClass} : mscp.server.handlerClass
+    this.handlerDefinition = mscp.server.handlerClass
+    this.handlerClasses = {}
     this.handlerGlobal = mscp.server.handlerGlobal
-    this.handlerClassNamespaces = {}
     this.uses = mscp.server.uses
     this.statics = mscp.server.statics
     this.parentMSCP = mscp.server.parentMSCP
     this.rootPath = mscp.server.rootPath || "/"
     this.setupHandler = mscp.setupHandler
+  }
+
+  async reload(){
+    this.definition = this.mscp.definition;
+    this.handlerGlobal = undefined;
+    await this.initHandler();
   }
 
   async run(callingPort){
@@ -201,7 +207,23 @@ class Server{
   }
 
   async initHandler(){
-    this.handler = new (this.handlerClasses[""])()
+    if(typeof this.handlerDefinition === "function"){
+      this.handlerClasses = {"": this.handlerDefinition}
+      this.handler = new this.handlerDefinition();
+    } else {
+      for(let cls in this.handlerDefinition){
+        if(typeof this.handlerDefinition[cls] === "string"){
+          delete require.cache[require.resolve(this.handlerDefinition[cls])];
+          this.handlerClasses[cls] = require(this.handlerDefinition[cls]);
+        }
+      }
+
+      if(this.handlerClasses[""] !== undefined)
+        this.handler = new (this.handlerClasses[""])()
+      else
+        this.handler = {}
+    }
+
     let h = this.handler
     let def = this.definition
 
@@ -282,6 +304,7 @@ class Server{
 
       // Add forward methods
     for(let s of setup.forwards){
+      console.log(`Handling forward ${s.function}` )
       if(!s.server || !s.function){
         console.log("Missing server or function of forward")
         continue;
@@ -316,6 +339,8 @@ class Server{
       } else {
         //No dep found - use remote server def:
         let fdef = await this.mscp.client.getForwardFunctionDef(s)
+        console.log("fdef")
+        console.log(fdef)
 
         if(fdef != null){
           this.addTranscendFunction(fdef.name, fdef.namespace);
@@ -437,7 +462,7 @@ class Server{
     }
 
     if(fdef == null){
-      return {error: "Unknown function " + functionName, functionName: functionName}
+      return {error: "Unknown function " + functionName, functionName: functionName, namespace: namespace}
     }
 
     functionName = fdef.name; // name in the correct case (this.functionDef is lowercase)

@@ -8,7 +8,14 @@ class Setup{
 
   constructor(mscp){
     this.mscp = mscp
+    this.init();
+  }
 
+  reload(){
+    this.init();
+  }
+
+  init(){
     if(fs.existsSync("./setup.json"))
       this.setup = JSON.parse(fs.readFileSync("./setup.json", "utf-8"))
     else

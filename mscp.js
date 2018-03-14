@@ -51,8 +51,18 @@ class MSCP{
       console.log("Not starting server, as there aren't any handler")
     }
 
-
     this.mscpReadyResolve();
+
+    process.on("message", async (m) => {
+      if(m == "reload"){
+        console.log("Reloading...")
+        await this._initDefinition();
+        await this.setupHandler.reload();
+        await this.client.reload();
+        await this.server.reload();
+        console.log("Finished reloading")
+      }
+    })
   }
 }
 
