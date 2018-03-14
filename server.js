@@ -339,8 +339,6 @@ class Server{
       } else {
         //No dep found - use remote server def:
         let fdef = await this.mscp.client.getForwardFunctionDef(s)
-        console.log("fdef")
-        console.log(fdef)
 
         if(fdef != null){
           this.addTranscendFunction(fdef.name, fdef.namespace);
