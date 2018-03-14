@@ -171,7 +171,7 @@ class Server{
     var response = null;
 
     if(apiPath == ""){
-      response = this.getFullDefForClient()
+      response = await this.getFullDefForClient()
     } else {
       response = await this.handleRequest(apiPath, data, req, res)
     }
@@ -189,11 +189,12 @@ class Server{
     }
   }
 
-  getFullDefForClient(){
+  async getFullDefForClient(){
     let fullDef = JSON.parse(JSON.stringify(this.definition))
-    if(this.setupHandler.setup.forwards !== undefined){
-      for(let f of this.setupHandler.setup.forwards){
-        fullDef.serve.push(this.functionDef[f.function.toLowerCase()])
+    for(let f of this.setupHandler.setup.forwards || []){
+      let fdef = await this.mscp.client.getForwardFunctionDef(f)
+      if(fdef != null){
+        fullDef.serve.push(fdef)
       }
     }
     return fullDef;
@@ -262,7 +263,6 @@ class Server{
             return {error: "Not implemented"}
           }
         }
-
         this.functionDef[s.namespace + '.' + s.name.toLowerCase()] = s;
       } else {
         if(this.handler[s.name] === undefined){
@@ -313,23 +313,44 @@ class Server{
         }
 
         this.functionDef[chosenDep.name.toLowerCase()] = chosenDep;
+      } else {
+        //No dep found - use remote server def:
+        let fdef = await this.mscp.client.getForwardFunctionDef(s)
+
+        if(fdef != null){
+          this.addTranscendFunction(fdef.name, fdef.namespace);
+          this.functionDef[(fdef.namespace?fdef.namespace+".":'')+fdef.name] = fdef
+        }
       }
     }
   }
 
-  addTranscendFunction(functionName){
-    this.handler[functionName] = async function(...args){
-      if(this.mscp[functionName] !== undefined){
-        return await this.mscp[functionName].apply(this.mscp, args)
-      } else {
-        return {error: "Not implemented"}
+  addTranscendFunction(functionName, namespace){
+    if(namespace){
+      if(this.handler[namespace] === undefined)
+        this.handler[namespace] = {}
+
+      this.handler[namespace][functionName] = async function(...args){
+        if(this.mscp[namespace] !== undefined && this.mscp[namespace][functionName] !== undefined){
+          return await this.mscp[namespace][functionName].apply(this.mscp, args)
+        } else {
+          return {error: "Not implemented"}
+        }
+      }
+    } else {
+      this.handler[functionName] = async function(...args){
+        if(this.mscp[functionName] !== undefined){
+          return await this.mscp[functionName].apply(this.mscp, args)
+        } else {
+          return {error: "Not implemented"}
+        }
       }
     }
   }
 
   async handleRequest(apiPath, data, req, res){
     if(apiPath == ""){
-      return this.getFullDefForClient()
+      return await this.getFullDefForClient()
     }
 
     let pathParts = apiPath.split("/")
@@ -355,6 +376,37 @@ class Server{
           functionName = s.name
           pathParts.shift()
           break;
+        }
+      }
+    }
+
+    // Then look for forwards
+    if(!fdef && pathParts.length > 0){
+      let namespaceFoundSoFar = namespace;
+      let server = null;
+      namespace = "";
+      for(let s of (this.setupHandler.setup.servers || [])){
+        if(namespaceFoundSoFar){
+          if(namespaceFoundSoFar == s.namespace){
+            namespace = s.namespace;
+            server = s;
+            break;
+          }
+        } else if(s.namespace == pathParts[0]){
+            namespace = s.namespace
+            server = s;
+            pathParts.shift()
+            break;
+        }
+      }
+
+      if(namespace && server){
+        for(let fwd of this.setupHandler.setup.forwards || []){
+          if(fwd.server = server.name && fwd.function.toLowerCase() == pathParts[0].toLowerCase()){
+            functionName = fwd.function
+            pathParts.shift()
+            break;
+          }
         }
       }
     }
@@ -432,7 +484,7 @@ class Server{
 
     let result = null;
     try {
-      let context = new (this.handlerClasses[namespace])()
+      let context = this.handlerClasses[namespace] ? new (this.handlerClasses[namespace])() : {}
       context.mscp = this.mscp
       context.definition = this.definition
       context.global = this.handlerGlobal

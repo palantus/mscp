@@ -109,7 +109,7 @@ function initRemote(){
             showRecordsPerPageSelector: false,
             showFieldsSelector: true,
             columns: [
-                  //{title: "Namespace", dataKey: "namespace"},
+                  {title: "Namespace", dataKey: "namespace"},
                   {title: "Name", dataKey: "name"},
                   {title: "Arguments", dataKey: "arguments", width: "270px"}
                  ],
@@ -140,7 +140,7 @@ function initRemote(){
               }},
               {title: "Forward", onClick: async function(a, r, cb){
                 delete r.arguments;
-                await req("add-forward", {server: curSelectedServer.name, function: r.name});
+                await req("add-forward", {server: curSelectedServer.name, function: r.name, namespace: r.namespace});
                 cb();
                 refreshForwards();
               }}

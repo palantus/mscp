@@ -34,6 +34,13 @@ class Client{
     this.connectionManager = new ConnectionManager(this.mscp);
     await this.connectionManager.init();
     this.loadDefinitionsPromise = this.loadAllDefinitions();
+
+    if(this.setupHandler.setup.forwards){
+      await this.loadDefinitionsPromise;
+      for(let fwd of this.setupHandler.setup.forwards){
+        this.addForward(fwd)
+      }
+    }
   }
 
   async loadAllDefinitions(){
@@ -128,6 +135,35 @@ class Client{
     }
   }
 
+  async addForward(fwd){
+    let server = this.setupHandler.setup.servers.find((s) => s.name = fwd.server);
+    let fdef = await this.getForwardFunctionDef(fwd)
+
+    let obj = {}
+    if(fdef.namespace !== undefined && fdef.namespace != ""){
+      if(this.mscp[fdef.namespace] === undefined)
+        this.mscp[fdef.namespace] = {}
+      obj = this.mscp[fdef.namespace]
+    } else {
+      obj = this.mscp
+    }
+
+    obj[fdef.name] = async (...args) => {
+
+        let data = {}
+        for(let i = 0; i < fdef.args.length && i < args.length; i++){
+          let a = fdef.args[i]
+          if(typeof a === "string"){
+            data[a] = args[i] !== undefined ? args[i] : null
+          } else if (typeof a === "object" && typeof a.name === "string" && a.name != ""){
+            data[a.name] = args[i] !== undefined ? args[i] : null
+          }
+        }
+
+        return await this.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data)
+    }
+  }
+
   addDefinition(serverId, def){
     if(def == null)
       return;
@@ -160,6 +196,24 @@ class Client{
         }
       }
     }
+  }
+
+  async getForwardFunctionDef(forward){
+    await this.mscp.client.loadDefinitionsPromise;
+
+    let server = this.setupHandler.setup.servers.find((s) => s.name = forward.server);
+    if(!server || server.enabled === false)
+      return null;
+
+    let serverDef = this.mscp.client.serverDefinitions[server.id];
+    if(!serverDef)
+      return null;
+
+    let fdef = serverDef.serve.find((s) => (!s.namespace || s.namespace == forward.namespace) && s.name == forward.function);
+    fdef = JSON.parse(JSON.stringify(fdef));
+    fdef.namespace = server.namespace;
+
+    return fdef;
   }
 }
 

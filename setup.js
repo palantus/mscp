@@ -481,7 +481,7 @@ class Setup{
 
           let alreadyExists = false
           for(let i = 0; i < this.setup.forwards.length; i++){
-            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function){
+            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function && (!this.setup.forwards[i].namespace || this.setup.forwards[i].namespace == data.namespace)){
               alreadyExists = true;
               break;
             }

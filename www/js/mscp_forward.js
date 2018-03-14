@@ -10,6 +10,7 @@ function initForward(){
             showFieldsSelector: false,
             columns: [
                   {title: "Server", dataKey: "server"},
+                  {title: "Namespace", dataKey: "namespace"},
                   {title: "Function", dataKey: "function"}
                  ],
             dataSource: async function(onData){
