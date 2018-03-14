@@ -138,6 +138,8 @@ class Client{
   async addForward(fwd){
     let server = this.setupHandler.setup.servers.find((s) => s.name = fwd.server);
     let fdef = await this.getForwardFunctionDef(fwd)
+    if(!fdef)
+      return;
 
     let obj = {}
     if(fdef.namespace !== undefined && fdef.namespace != ""){
