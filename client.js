@@ -210,9 +210,11 @@ class Client{
       return null;
 
     let fdef = serverDef.serve.find((s) => (!s.namespace || s.namespace == forward.namespace) && s.name == forward.function);
+    if(!fdef)
+      return null;
+
     fdef = JSON.parse(JSON.stringify(fdef));
     fdef.namespace = server.namespace;
-
     return fdef;
   }
 }
