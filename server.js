@@ -215,6 +215,8 @@ class Server{
         if(typeof this.handlerDefinition[cls] === "string"){
           delete require.cache[require.resolve(this.handlerDefinition[cls])];
           this.handlerClasses[cls] = require(this.handlerDefinition[cls]);
+        } else if(typeof this.handlerDefinition[cls] === "function"){
+          this.handlerClasses[cls] = this.handlerDefinition[cls];
         }
       }
 

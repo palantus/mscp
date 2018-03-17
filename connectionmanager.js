@@ -113,19 +113,26 @@ class ClientConnections{
     var data = _data !== undefined ? _data : {}
     return new Promise(async (resolve, reject) => {
       if(server.type === "http"){
-        let response = (await this.mscp._request({
-          url: server.url + "/api/" + method,
-          method: "POST",
-          headers: {
-              "content-type": "application/json",
-          },
-          json: data
-        }))
+        let response;
+        try{
+          response = (await this.mscp._request({
+            url: server.url + "/api/" + method,
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+            },
+            json: data
+          }))
+        } catch(err){
+          console.log("Error in calling dependency '" + method + "': " + err)
+          reject(err);
+          return;
+        }
 
         //response = SON.parse(response)
         if(response.error !== undefined){
           console.log("Error in calling dependency '" + method + "': " + response.error)
-          throw response.error;
+          reject(response.error);
         }
         resolve(method == "" ? response : response.result)
       } else {
@@ -156,7 +163,7 @@ class ClientConnections{
         promise.then((response)=>{
           if(response.error !== undefined){
             console.log("Error in calling dependency '" + (typeof dep === "string" ? dep : dep.name) + "': " + response.error)
-            throw response.error;
+            reject(response.error);
           }
           resolve(method == "" ? response : response.result)
         })
