@@ -287,7 +287,7 @@ class Server{
             return {error: "Not implemented"}
           }
         }
-        this.functionDef[s.namespace + '.' + s.name.toLowerCase()] = s;
+        this.functionDef[s.namespace.toLowerCase() + '.' + s.name.toLowerCase()] = s;
       } else {
         if(this.handler[s.name] === undefined){
           this.handler[s.name] = async function(...args){
@@ -344,7 +344,7 @@ class Server{
 
         if(fdef != null){
           this.addTranscendFunction(fdef.name, fdef.namespace);
-          this.functionDef[(fdef.namespace?fdef.namespace+".":'')+fdef.name] = fdef
+          this.functionDef[(fdef.namespace?fdef.namespace.toLowerCase()+".":'')+fdef.name.toLowerCase()] = fdef
         }
       }
     }
