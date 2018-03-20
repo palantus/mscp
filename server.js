@@ -388,7 +388,7 @@ class Server{
     // First look for explicit namespace
     if(pathParts.length > 0){
       for(let s of def){
-        if(s.namespace == pathParts[0]){
+        if(s.namespace.toLowerCase() == pathParts[0].toLowerCase()){
           namespace = s.namespace
           pathParts.shift()
           break;
@@ -397,7 +397,7 @@ class Server{
 
       // Then find function - first look for explicit function
       for(let s of def){
-        if(s.name.toLowerCase() == pathParts[0].toLowerCase()){
+        if((!namespace || s.namespace == namespace ) && s.name.toLowerCase() == pathParts[0].toLowerCase()){
           functionName = s.name
           pathParts.shift()
           break;
@@ -406,7 +406,7 @@ class Server{
     }
 
     // Then look for forwards
-    if(!fdef && pathParts.length > 0){
+    if(!functionName && pathParts.length > 0){
       let namespaceFoundSoFar = namespace;
       let server = null;
       namespace = "";
