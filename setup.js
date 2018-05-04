@@ -66,6 +66,12 @@ class Setup{
             break;
         }
 
+        if(data.namespace){
+            if(data.namespace.toLowerCase() == 'client' || data.namespace.toLowerCase() == 'server' || data.namespace.toLowerCase() == 'mscp'){
+              data.namespace = data.namespace+'2';
+            }
+        }
+
         if(this.setup.servers === undefined)
           this.setup.servers = []
 
