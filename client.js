@@ -209,7 +209,7 @@ class Client{
   async getForwardFunctionDef(forward){
     await this.mscp.client.loadDefinitionsPromise;
 
-    let server = this.setupHandler.setup.servers.find((s) => s.name = forward.server);
+    let server = this.setupHandler.setup.servers.find((s) => s.name == forward.server);
     if(!server || server.enabled === false)
       return null;
 
