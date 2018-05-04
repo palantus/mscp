@@ -17,10 +17,22 @@ class ClientConnections{
     if(this.mscp.setupHandler.setup.servers !== undefined){
       for(let s of this.mscp.setupHandler.setup.servers){
         if(s.type == "websocket-server" && s.url){
-          this.connect(s)
+          this.connect(s).catch(() => true)
         } else if(s.type == "websocket-client"){
           this.connPromises[s.id] = {}
           this.connPromises[s.id].promise = new Promise((resolve, reject) => this.connPromises[s.id].resolve = resolve)
+        }
+      }
+    }
+
+    setInterval(() => this.tryReconnect(), 30000)
+  }
+
+  async tryReconnect(){
+    if(this.mscp.setupHandler.setup.servers !== undefined){
+      for(let s of this.mscp.setupHandler.setup.servers){
+        if(s.type == "websocket-server" && s.url && !this.conns[s.id]){
+          this.connect(s).then(() => console.log("Reconnected!")).catch(() => true)
         }
       }
     }
@@ -35,29 +47,38 @@ class ClientConnections{
       let url = server.url.startsWith("ws://") ? server.url : "ws://" + server.url
       const ws = new WebSocket(url);
 
-      ws.on('open', () => {
+      ws.on('open', async () => {
         ws.serverId = server.id
         this.conns[server.id] = {server: server, ws: ws}
         this.connPromises[server.id] = undefined
         resolve()
+        let def = await this.mscp.setupHandler.getServerDefinition(server)
+        this.mscp.client.addDefinition(server.id, def)
       })
 
       ws.on('message', (data, flags) => this.handleMessage(server, data, ws))
-      ws.on('close', () => this.onConnectionClosed(ws))
+      ws.on('close', () => {
+        console.log("Connection to server " + server.id + " closed")
+        this.connPromises[server.id] = undefined;
+        this.mscp.client.removeDefinition(server.id)
+        this.conns[server.id] = undefined
+      })
+      ws.on('error', (err) => {
+        this.connPromises[server.id] = undefined;
+        reject("Could not connect to " + server.name)
+      })
     })
     return this.connPromises[server.id];
   }
 
-  async onConnectionClosed(ws){
-    if(ws.serverId !== undefined){
-      this.mscp.client.removeDefinition(ws.serverId)
-      this.conns[ws.serverId] = undefined
-    }
-  }
-
   async onNewConnection(ws){
     ws.on('message', (message) => this.handleMessage(null, message, ws))
-    ws.on('close', () => this.onConnectionClosed(ws))
+    ws.on('close', () => {
+      if(ws.serverId){
+        this.mscp.client.removeDefinition(ws.serverId)
+        this.conns[ws.serverId] = undefined
+      }
+    })
   }
 
   async handleMessage(server, message, ws){
@@ -138,7 +159,12 @@ class ClientConnections{
       } else {
         if(this.conns[server.id] === undefined){
           if(server.type == "websocket-server"){
-            await this.connect(server)
+            try{
+              await this.connect(server)
+            } catch(err){
+              reject(err);
+              return;
+            }
           } else {
             reject("Not connected");
             return;
