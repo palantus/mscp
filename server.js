@@ -427,7 +427,7 @@ class Server{
 
       if(namespace && server){
         for(let fwd of this.setupHandler.setup.forwards || []){
-          if(fwd.server = server.name && fwd.function.toLowerCase() == pathParts[0].toLowerCase()){
+          if(fwd.server == server.name && fwd.function.toLowerCase() == pathParts[0].toLowerCase()){
             functionName = fwd.function
             pathParts.shift()
 

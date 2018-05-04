@@ -44,7 +44,7 @@ class ClientConnections{
     }
 
     this.connPromises[server.id] = new Promise((resolve, reject) => {
-      let url = server.url.startsWith("ws://") ? server.url : "ws://" + server.url
+      let url = (server.url.startsWith("ws://") || server.url.startsWith("wss://")) ? server.url : "ws://" + server.url
       const ws = new WebSocket(url);
 
       ws.on('open', async () => {
