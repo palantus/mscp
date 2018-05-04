@@ -162,7 +162,7 @@ class ClientConnections{
 
         promise.then((response)=>{
           if(response.error !== undefined){
-            console.log("Error in calling dependency '" + (typeof dep === "string" ? dep : dep.name) + "': " + response.error)
+            console.log(`Error in calling method on server ${server.name}: ${response.error}`)
             reject(response.error);
           }
           resolve(method == "" ? response : response.result)

@@ -111,7 +111,7 @@ class Server{
     const wss = new WebSocket.Server({ server });
 
     wss.on('connection', (ws) => {
-      const location = url.parse(ws.upgradeReq.url, true);
+      //const location = url.parse(ws.upgradeReq.url, true);
       // You might use location.query.access_token to authenticate or share sessions
       // or ws.upgradeReq.headers.cookie (see http://stackoverflow.com/a/16395220/151312)
       this.mscp.client.connectionManager.onNewConnection(ws)
@@ -430,6 +430,17 @@ class Server{
           if(fwd.server = server.name && fwd.function.toLowerCase() == pathParts[0].toLowerCase()){
             functionName = fwd.function
             pathParts.shift()
+
+            //If it is forwarded using websocket and not yet defined (client connected recently), add method definition
+            let fullName = namespace.toLowerCase() + '.' + functionName.toLowerCase();
+            if(!this.handler[namespace.toLowerCase()] || !this.handler[namespace.toLowerCase()][functionName.toLowerCase()]){
+              let fwdDef = await this.mscp.client.getForwardFunctionDef(fwd)
+              this.functionDef[namespace.toLowerCase() + '.' + functionName.toLowerCase()] = JSON.parse(JSON.stringify(fwdDef));
+
+              if(!this.handler[namespace.toLowerCase()])
+                this.handler[namespace.toLowerCase()] = {}
+              this.handler[namespace.toLowerCase()][functionName.toLowerCase()] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'.'+fwd.function:fwd.function, args)
+            }
             break;
           }
         }

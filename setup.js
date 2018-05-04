@@ -49,19 +49,21 @@ class Setup{
 
       case "add-server":
       case "refresh-server":
-        if(!data.url.startsWith("http"))
-          data.url = "http://" + data.url;
-
         switch(data.type){
           case "http":
+            if(!data.url.startsWith("http"))
+              data.url = "http://" + data.url;
+
           case "websocket-server":
             var definition = await this.getServerDefinition(data)
             if(definition != null){
               data.name = definition.name;
             }
             break;
+
           case "websocket-client":
             data.name = "Client";
+            break;
         }
 
         if(this.setup.servers === undefined)
