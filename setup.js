@@ -96,6 +96,7 @@ class Setup{
               this.setup.servers[i].namespace = data.namespace;
               this.setup.servers[i].enabled = data.enabled;
               this.setup.servers[i].websocket = data.websocket;
+              this.setup.servers[i].accesskey = data.accesskey;
             }
           }
           fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)

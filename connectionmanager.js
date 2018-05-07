@@ -132,7 +132,10 @@ class ClientConnections{
   }
 
   call(server, method, _data){
-    var data = _data !== undefined ? _data : {}
+    let data = _data !== undefined ? JSON.parse(JSON.stringify(_data)) : {}
+    if(server.accesskey){
+      data.accessKey = server.accesskey;
+    }
     return new Promise(async (resolve, reject) => {
       if(server.type === "http"){
         let response;
