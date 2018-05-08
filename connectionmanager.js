@@ -131,13 +131,19 @@ class ClientConnections{
     }
   }
 
-  call(server, method, _data){
+  call(server, _method, _data){
     let data = _data !== undefined ? JSON.parse(JSON.stringify(_data)) : {}
-    if(server.accesskey){
-      data.accessKey = server.accesskey;
-    }
+    let method = JSON.parse(JSON.stringify(_method))
+
     return new Promise(async (resolve, reject) => {
       if(server.type === "http"){
+        if(Array.isArray(data)){
+          method += "/" + data.join("/")
+          data = {}
+        }
+        if(server.accesskey){
+          data.accessKey = server.accesskey;
+        }
         let response;
         try{
           response = (await this.mscp._request({
@@ -161,6 +167,7 @@ class ClientConnections{
         }
         resolve(method == "" ? response : response.result)
       } else {
+
         if(this.conns[server.id] === undefined){
           if(server.type == "websocket-server"){
             try{
