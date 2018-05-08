@@ -137,12 +137,11 @@ class ClientConnections{
 
     return new Promise(async (resolve, reject) => {
       if(server.type === "http"){
-        if(Array.isArray(data)){
-          method += "/" + data.join("/")
-          data = {}
-        }
         if(server.accesskey){
-          data.accessKey = server.accesskey;
+          if(Array.isArray(data))
+            method += "?accessKey=" + server.accesskey
+          else
+            data.accessKey = server.accesskey;
         }
         let response;
         try{

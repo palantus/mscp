@@ -487,6 +487,8 @@ class Server{
 
       if(data[arg.name] !== undefined)
         val = data[arg.name]
+      else if(Array.isArray(data) && data[argNum] !== undefined)
+        val = data[argNum]
       else if(pathParts.length > argNum && pathParts[argNum] != "null")
         val = pathParts[argNum]
 
