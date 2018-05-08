@@ -133,8 +133,7 @@ function initRemote(){
             recordRightClickMenu: {actions: [
               {title: "Add as dependency", onClick: async function(a, r, cb){
                 delete r.arguments;
-                r.namespace = curSelectedServer.namespace;
-                await req("add-server-func-as-dep", {serverId: curSelectedServer.id, func: r});
+                await req("add-server-func-as-dep", {serverId: curSelectedServer.id, serverNamespace: curSelectedServer.namespace, func: r});
                 cb();
                 refreshDeps();
               }},

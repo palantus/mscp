@@ -439,7 +439,7 @@ class Server{
 
               if(!this.handler[namespace.toLowerCase()])
                 this.handler[namespace.toLowerCase()] = {}
-              this.handler[namespace.toLowerCase()][functionName.toLowerCase()] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'.'+fwd.function:fwd.function, args)
+              this.handler[namespace.toLowerCase()][functionName.toLowerCase()] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'/'+fwd.function:fwd.function, args)
             }
             break;
           }

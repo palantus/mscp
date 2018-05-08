@@ -114,7 +114,7 @@ class ClientConnections{
       return;
 
     if(msg.type == "call" && typeof msg.id === "string"){
-      let reply = await this.mscp.server.handleRequest(msg.method, msg.data);
+      let reply = await this.mscp.server.handleRequest(msg.method, msg.data, {ip: ws._socket.remoteAddress, accessKey: msg.accesskey, area: 'api'});
       if(this.conns[server.id] === undefined){
         await this.connect(server)
       }

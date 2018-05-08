@@ -96,11 +96,11 @@ class Client{
       await self.loadDefinitionsPromise
 
       let d2s = self.setupHandler.setup.dependencyToServer || {}
-      let setupServerId = d2s[(dep.namespace?dep.namespace+".":"")+dep.name]
+      let setupServer = d2s[(dep.namespace?dep.namespace+".":"")+dep.name]
 
-      if(typeof setupServerId === "string" && setupServerId.length > 0){
+      if(setupServer && typeof setupServer.id === "string" && setupServer.id.length > 0){
         for(let s of servers){
-          if(s.id == setupServerId){
+          if(s.id == setupServer.id){
             chosenServer = s;
           }
         }
@@ -120,7 +120,9 @@ class Client{
               }
             }
             for(let ss of def.serve){
-              if(ss.name.toLowerCase() == dep.name.toLowerCase()){
+              if(ss.namespace && (!setupServer.namespace || ss.namespace.toLowerCase() != setupServer.namespace.toLowerCase()))
+                continue;
+              if(ss.name.toLowerCase() == setupServer.method.toLowerCase()){
                 chosenServer = s;
                 break;
               }
@@ -137,7 +139,10 @@ class Client{
         throw error
       }
 
-      return await self.connectionManager.call(chosenServer, dep.name, data)
+      if(setupServer)
+        return await self.connectionManager.call(chosenServer, (setupServer.namespace?setupServer.namespace+'/':'') + setupServer.method, data)
+      else
+        return await self.connectionManager.call(chosenServer, dep.name.replace(/./g, '/'), data)
     }
   }
 

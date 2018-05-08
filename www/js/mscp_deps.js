@@ -10,11 +10,11 @@ function initDeps(){
             showRecordsPerPageSelector: false,
             showFieldsSelector: true,
             columns: [
-                  {title: "Server ID", dataKey: "serverId", visible: false},
-                  {title: "Server", dataKey: "serverName"},
+                  {title: "Namespace", dataKey: "namespace"},
                   {title: "Function", dataKey: "name"},
                   {title: "Arguments", dataKey: "arguments", width: "270px"},
-                  {title: "Namespace", dataKey: "namespace"}
+                  {title: "Server ID", dataKey: "serverId", visible: false},
+                  {title: "Server", dataKey: "serverName"}
                  ],
             dataSource: async function(onData){
                let response = await req('get-dependencies');
@@ -29,8 +29,7 @@ function initDeps(){
             },
             editRecord: {
               fields: [
-                {name: "namespace", title: "Namespace"},
-                {name: "serverId", title: "Server ID"}
+                {name: "namespace", title: "Namespace"}
               ],
               onEdit: async function(oldRecord, newRecord, cb){
                 newRecord.oldNamespace = oldRecord.namespace
