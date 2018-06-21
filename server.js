@@ -432,8 +432,7 @@ class Server{
             pathParts.shift()
 
             //If it is forwarded using websocket and not yet defined (client connected recently), add method definition
-            let fullName = namespace.toLowerCase() + '.' + functionName.toLowerCase();
-            if(!this.handler[namespace.toLowerCase()] || !this.handler[namespace.toLowerCase()][functionName.toLowerCase()]){
+            if(!this.handler[namespace] || !this.handler[namespace][functionName]){
               let fwdDef = await this.mscp.client.getForwardFunctionDef(fwd)
               this.functionDef[namespace.toLowerCase() + '.' + functionName.toLowerCase()] = JSON.parse(JSON.stringify(fwdDef));
 
