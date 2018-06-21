@@ -61,7 +61,7 @@ class ClientConnections{
         console.log("Connection to server " + server.id + " closed")
         this.connPromises[server.id] = undefined;
         this.mscp.client.removeDefinition(server.id)
-        this.conns[server.id] = undefined;
+        delete this.conns[server.id];
         setTimeout(() => this.tryReconnect(), 5000);
       })
       ws.on('error', (err) => {
@@ -77,7 +77,7 @@ class ClientConnections{
     ws.on('close', () => {
       if(ws.serverId){
         this.mscp.client.removeDefinition(ws.serverId)
-        this.conns[ws.serverId] = undefined
+        delete this.conns[ws.serverId];
       }
     })
   }
