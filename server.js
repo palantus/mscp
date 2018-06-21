@@ -437,9 +437,9 @@ class Server{
               let fwdDef = await this.mscp.client.getForwardFunctionDef(fwd)
               this.functionDef[namespace.toLowerCase() + '.' + functionName.toLowerCase()] = JSON.parse(JSON.stringify(fwdDef));
 
-              if(!this.handler[namespace.toLowerCase()])
-                this.handler[namespace.toLowerCase()] = {}
-              this.handler[namespace.toLowerCase()][functionName.toLowerCase()] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'/'+fwd.function:fwd.function, args)
+              if(!this.handler[namespace])
+                this.handler[namespace] = {}
+              this.handler[namespace][functionName] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'/'+fwd.function:fwd.function, args)
             }
             break;
           }
