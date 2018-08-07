@@ -141,9 +141,7 @@ class Server{
   }
 
   async handleAPIRequest (req, res){
-    var data = req.body;
-    if(data === undefined || (Object.keys(data).length === 0 && data.constructor === Object))
-      data = req.query;
+    let data = this.extend({}, req.body, req.query);
 
     if(data === undefined){
       res.end("Invalid request!");
@@ -563,6 +561,19 @@ class Server{
     }
 
     return ret
+  }
+
+  extend(target) {
+      var sources = [].slice.call(arguments, 1);
+      sources.forEach(function (source) {
+          if(source === undefined || source == null)
+            return;
+
+          for (var prop in source) {
+              target[prop] = source[prop];
+          }
+      });
+      return target;
   }
 }
 
