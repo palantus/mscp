@@ -487,7 +487,7 @@ class Server{
       else if(Array.isArray(data) && data[argNum] !== undefined)
         val = data[argNum]
       else if(pathParts.length > argNum && pathParts[argNum] != "null")
-        val = pathParts[argNum]
+        val = decodeURI(pathParts[argNum])
 
       switch(a.type || "string"){
         case "string":
