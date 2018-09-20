@@ -31,11 +31,15 @@ function initRemote(){
                     popup.find("input[name=url]").parent().parent().hide();
                   }
 
-                  if(newVal == "websocket-client")
+                  if(newVal == "websocket-client"){
                     popup.find("input[name=accesskey]").val(guid())
-                  else
+                    popup.find("input[name=name]").parent().parent().show();
+                  } else {
                     popup.find("input[name=accesskey]").val("")
+                    popup.find("input[name=name]").parent().parent().hide();
+                  }
                 }},
+                {name: "name", title: "Name", visible: false},
                 {name: "url", title: "URL"},
                 {name: "namespace", title: "Namespace"},
                 {name: "accesskey", title: "Access key", visible: false},
@@ -65,6 +69,7 @@ function initRemote(){
             },
             editRecord: {
               fields: [
+                {name: "name", title: "Name"},
                 {name: "namespace", title: "Namespace"},
                 {name: "enabled", title: "Enabled", type: "checkbox"},
                 {name: "accesskey", title: "Access key"}

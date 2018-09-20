@@ -62,7 +62,9 @@ class Setup{
             break;
 
           case "websocket-client":
-            data.name = "Client";
+            if(!data.name){
+              data.name = "Client";
+            }
             break;
         }
 
@@ -93,6 +95,7 @@ class Setup{
         if(data.id !== undefined){
           for(let i = 0; i < this.setup.servers.length; i++){
             if(this.setup.servers[i].id === data.id){
+              this.setup.servers[i].name = data.name;
               this.setup.servers[i].namespace = data.namespace;
               this.setup.servers[i].enabled = data.enabled;
               this.setup.servers[i].websocket = data.websocket;
