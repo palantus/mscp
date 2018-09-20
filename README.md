@@ -100,4 +100,4 @@ TBD
 
 ## CORS
 
-You can enable CORS by setting ''allowedOrigins'' in ''setup.json'' to the domains that should be allowed.
+You can enable CORS by setting ''allowedOrigins'' in ''setup.json'' to the domains that should be allowed. It supports regexps.

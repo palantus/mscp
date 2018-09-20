@@ -52,17 +52,27 @@ class Server{
         app.enable('trust proxy')
       }
 
-      app.options("/*", (req, res) => {
-        if(this.setupHandler.setup.allowedOrigins){
-          res.set('Access-Control-Allow-Origin', this.setupHandler.setup.allowedOrigins)
+      if(this.setupHandler.setup.allowedOrigins){
+        app.use("/api*", (req, res, next) => {
+          let allowOrigin = null;
+          if(req.header("Origin") == this.setupHandler.setup.allowedOrigins)
+            allowOrigin = req.header("Origin")
+          else if(new RegExp(this.setupHandler.setup.allowedOrigins).test(req.header("Origin")))
+            allowOrigin = req.header("Origin")
+          else
+            console.log(`Got CORS request from origin "${req.header("Origin")}", which is not allowed.`)
+
+          res.set('Access-Control-Allow-Origin', allowOrigin)
           res.set('Access-Control-Allow-Credentials', true)
           res.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
           res.set('Access-Control-Allow-Headers', 'Content-Type')
-          res.send(200);
-        } else {
-          console.log("Got OPTIONS request for data, but ignored it. Use allowedOrigins in setup.json to allow this!")
-        }
-      })
+          if ('OPTIONS' === req.method){
+            res.sendStatus(200);
+          } else {
+            next();
+          }
+        })
+      }
       app.use(fileUpload())
       app.use(bodyParser.urlencoded({extended: true }))
       app.use(bodyParser.json())

@@ -1,8 +1,8 @@
 "use strict"
 
 class MSCP{
-  async init(){
-    this.apiPath = typeof MSCP_API_PATH === "string" ? MSCP_API_PATH : '/api'
+  async init(apiPath){
+    this.apiPath = apiPath ? apiPath : typeof MSCP_API_PATH === "string" ? MSCP_API_PATH : '/api'
     this.def = await this.apireq("")
     this.mscp_request_include_always_parms = {}
 
