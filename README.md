@@ -96,3 +96,8 @@ TBD
 ## Reserved URL parameters:
 - accessKey: used when securing (som parts of) the server with access keys
 - responseType: can be used to set response type to XML instead of JSON
+
+
+## CORS
+
+You can enable CORS by setting ''allowedOrigins'' in ''setup.json'' to the domains that should be allowed.
