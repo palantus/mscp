@@ -524,7 +524,7 @@ class Server{
           val = typeof val === "boolean" ? val : val === "true" ? true : val === "false" ? false : null
           break;
         case "object":
-          val = (typeof val === "object" && !Array.isArray(val)) ? val : null
+          val = (typeof val === "object" && !Array.isArray(val)) ? val : (typeof val == "string") ? JSON.parse(val) : null
           break;
         case "array":
           val = Array.isArray(val) ? val : null
