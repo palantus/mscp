@@ -24,7 +24,7 @@ function initForward(){
             },
             editRecord: {
               fields: [
-                {name: "forwardAccessKey", title: "Forward access key"}
+                {name: "forwardAccessKey", title: "Forward access key", type: "checkbox"}
               ],
               onEdit: async function(oldRecord, newRecord, cb){
                 await req("update-forward", newRecord);

@@ -26,9 +26,7 @@ class Security{
     else
       ip = req.connection.remoteAddress;
 
-    var data = req.body;
-    if(data === undefined || (Object.keys(data).length === 0 && data.constructor === Object))
-      data = req.query;
+    let data = this.mscp.server.extend({}, req.body||{}, req.query||{});
 
     let area = "static"
     if(req.path.startsWith("/mscp")){

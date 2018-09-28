@@ -138,7 +138,7 @@ class ClientConnections{
     return new Promise(async (resolve, reject) => {
       let accessKey = _accessKey ? _accessKey : server.accesskey
       if(server.type === "http"){
-        if(saccessKey){
+        if(accessKey){
           if(Array.isArray(data))
             method += "?accessKey=" + accessKey
           else
