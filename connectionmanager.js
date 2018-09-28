@@ -131,17 +131,18 @@ class ClientConnections{
     }
   }
 
-  call(server, _method, _data){
+  call(server, _method, _data, _accessKey){
     let data = _data !== undefined ? JSON.parse(JSON.stringify(_data)) : {}
     let method = JSON.parse(JSON.stringify(_method))
 
     return new Promise(async (resolve, reject) => {
+      let accessKey = _accessKey ? _accessKey : server.accesskey
       if(server.type === "http"){
-        if(server.accesskey){
+        if(saccessKey){
           if(Array.isArray(data))
-            method += "?accessKey=" + server.accesskey
+            method += "?accessKey=" + accessKey
           else
-            data.accessKey = server.accesskey;
+            data.accessKey = accessKey;
         }
         let response;
         try{
@@ -190,7 +191,7 @@ class ClientConnections{
 
         this.conns[server.id].ws.send(JSON.stringify({
           id: id,
-          accesskey: server.type == "websocket-server" ? server.accesskey : undefined,
+          accesskey: server.type == "websocket-server" ? accessKey : undefined,
           type: "call",
           method: method,
           data: data

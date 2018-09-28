@@ -523,6 +523,17 @@ class Setup{
         }
         break;
 
+      case "update-forward":
+        if(data && data.server !== undefined && data.server != "" && data.function !== undefined && data.function != ""){
+          for(let i = 0; i < this.setup.forwards.length; i++){
+            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function){
+              this.setup.forwards[i].forwardAccessKey = data.forwardAccessKey;
+            }
+          }
+          await this.writeSetup()
+        }
+        break;
+
 
 
       // -------------------------

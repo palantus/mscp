@@ -11,7 +11,8 @@ function initForward(){
             columns: [
                   {title: "Server", dataKey: "server"},
                   {title: "Namespace", dataKey: "namespace"},
-                  {title: "Function", dataKey: "function"}
+                  {title: "Function", dataKey: "function"},
+                  {title: "Forward access key", dataKey: "forwardAccessKey"}
                  ],
             dataSource: async function(onData){
                let response = await req('get-forwards');
@@ -20,7 +21,16 @@ function initForward(){
             },
             deleteRecord: {
               onDelete: async function(record, cb){await req("remove-forward", record);cb();}
-            }
+            },
+            editRecord: {
+              fields: [
+                {name: "forwardAccessKey", title: "Forward access key"}
+              ],
+              onEdit: async function(oldRecord, newRecord, cb){
+                await req("update-forward", newRecord);
+                cb();
+              }
+            },
           })
   tcForwards.draw();
 }

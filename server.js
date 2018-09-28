@@ -457,7 +457,13 @@ class Server{
 
               if(!this.handler[namespace])
                 this.handler[namespace] = {}
-              this.handler[namespace][functionName] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'/'+fwd.function:fwd.function, args)
+
+              let useKey = null;
+              if(fwd.forwardAccessKey === true){
+                useKey = (req && req.mscp && req.mscp.accessKey) ? req.mscp.accessKey : (data && data.accessKey) ? data.accessKey : null;
+              }
+
+              this.handler[namespace][functionName] = async (...args) => this.mscp.client.connectionManager.call(server, fwd.namespace?fwd.namespace+'/'+fwd.function:fwd.function, args, useKey)
             }
             break;
           }
