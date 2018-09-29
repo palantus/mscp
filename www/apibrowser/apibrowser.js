@@ -7,7 +7,8 @@ $(function() {
 });
 
 function init(){
-  for(let s of mscp.def.serve){
+  let serve = mscp.def.serve.sort((a, b) => ((a.namespace||"aaa") + a.name) < ((b.namespace||"aaa") + b.name) ? -1 : 1)
+  for(let s of serve){
     let functionDiv = $("<div></div>", {class: "function"});
     if(setup.useFunctionTitles && s.title)
       functionDiv.html(s.title + (setup.showFunctionNames ? ` (${s.name})` : ''));

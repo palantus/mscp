@@ -23,6 +23,14 @@ function initServe(){
             dataSource: async function(onData){
                let response = await req('get-serve');
                let serve = await response.json()
+
+               let nsFilter = $("#serve-namespace-select").val();
+               refreshServeNamespaceFilter(serve);
+
+               if(nsFilter && nsFilter != 'all'){
+                 serve  = serve.filter((s) => s.namespace == nsFilter)
+               }
+
                for(let f of serve){
                   f.arguments = formatFunctionArgsAsString(f.args);
                }
@@ -174,6 +182,10 @@ function initServe(){
 
      $("#generatedhandler").html(handlerCode)
    })
+
+   $("#serve-namespace-select").on("change", () => {
+     tcServes.reloadData();
+   })
 }
 
 $(function() {
@@ -183,4 +195,17 @@ $(function() {
 function refreshServe(){
   tcServes.reloadData();
   tcSelectedServe.reloadData();
+}
+
+function refreshServeNamespaceFilter(serve){
+  if($("#serve-namespace-select option[value=all]").length < 1)
+    $("#serve-namespace-select").append(`<option value="all">All</option>`)
+
+  let namespacesAdded = new Set()
+  for(let s of serve.filter((v) => v.namespace ? true : false)){
+    if(!namespacesAdded.has(s.namespace) && $(`#serve-namespace-select option[value=${s.namespace}]`).length < 1){
+      $("#serve-namespace-select").append(`<option value="${s.namespace}">${s.namespace}</option>`)
+      namespacesAdded.add(s.namespace);
+    }
+  }
 }

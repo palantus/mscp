@@ -26,14 +26,14 @@ h1{color: white; text-align: center;}
 
 /* Function list */
 #functionlist div.function{
-  color: #00aa00;
-  font-size: 120%;
+  color: #000;
+  font-size: 90%;
   font-weight: bold;
   cursor: pointer;
 }
 
 #functionlist div.function:hover{
-  color: #007700;
+  color: #888;
 }
 
 /* Function details */
