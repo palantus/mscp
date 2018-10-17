@@ -136,7 +136,7 @@ class Client{
       if(chosenServer == null){
         let error = "Unable to find a server to satisfy a call to " + (dep.namespace?dep.namespace + ".":"") + dep.name;
         console.log("ERROR: " + error)
-        throw error
+        return;
       }
 
       if(setupServer)
