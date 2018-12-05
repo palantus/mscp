@@ -87,6 +87,9 @@ class Setup{
             }
           }
         }
+
+        await this.updateDependencyToServer();
+
         fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         response = {}
         break;
@@ -102,6 +105,7 @@ class Setup{
               this.setup.servers[i].accesskey = data.accesskey;
             }
           }
+          await this.updateDependencyToServer();
           fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
         }
         break;
@@ -150,6 +154,7 @@ class Setup{
           for(let i = 0; i < this.setup.servers.length; i++){
             if(this.setup.servers[i].id === data.id){
               this.setup.servers.splice(i, 1)
+              await this.updateDependencyToServer();
               fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), ()=>null)
             }
           }
@@ -728,6 +733,52 @@ class Setup{
     {
       await new Promise(r => fs.writeFile("./setup.json", JSON.stringify(this.setup, null, 2), (err)=>r()));
     } catch(err){}
+  }
+
+  async updateDependencyToServer(){
+    let def = await this.readDefinition()
+    let deps = def.dependencies !== undefined ? def.dependencies : []
+    deps = JSON.parse(JSON.stringify(deps))
+    if(this.setup.dependencyToServer == undefined)
+      this.setup.dependencyToServer = {}
+
+    for(let d of deps){
+      let server = this.setup.dependencyToServer[(d.namespace?d.namespace+".":"")+d.name]
+      if(server){
+        let found = false;
+        for(let i = 0; i < (this.setup.servers || []).length; i++){
+          if(this.setup.servers[i].id === server.id){
+            //d.serverId = server.id
+            //d.serverName = this.setup.servers[i].name
+            found = true;
+          }
+        }
+        if(!found){
+          delete this.setup.dependencyToServer[(d.namespace?d.namespace+".":"")+d.name];
+          server = null;
+        }
+      }
+
+      if(!server){
+        for(let i = 0; i < (this.setup.servers || []).length; i++){
+          let s = this.setup.servers[i];
+          if(s.namespace != d.namespace)
+            continue;
+
+          let serverDef = await this.getServerDefinition(s)
+          if(!serverDef){
+            console.log("Could not get definition from server: " + s.name)
+            continue;
+          }
+
+          for(let serv of serverDef.serve){
+            if(serv.name == d.name){
+              this.setup.dependencyToServer[(d.namespace?d.namespace+".":"")+d.name] = {id: s.id, method: serv.name, namespace: serv.namespace}
+            }
+          }
+        }
+      }
+    }
   }
 
 }

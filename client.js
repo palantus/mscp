@@ -120,9 +120,9 @@ class Client{
               }
             }
             for(let ss of def.serve){
-              if(ss.namespace && (!setupServer.namespace || ss.namespace.toLowerCase() != setupServer.namespace.toLowerCase()))
+              if(ss.namespace && (!dep.namespace || ss.namespace.toLowerCase() != dep.namespace.toLowerCase()))
                 continue;
-              if(ss.name.toLowerCase() == setupServer.method.toLowerCase()){
+              if(ss.name.toLowerCase() == dep.name.toLowerCase()){
                 chosenServer = s;
                 break;
               }
@@ -142,7 +142,7 @@ class Client{
       if(setupServer)
         return await self.connectionManager.call(chosenServer, (setupServer.namespace?setupServer.namespace+'/':'') + setupServer.method, data)
       else
-        return await self.connectionManager.call(chosenServer, dep.name.replace(/./g, '/'), data)
+        return await self.connectionManager.call(chosenServer, dep.name.replace(/\./g, '/'), data)
     }
   }
 
