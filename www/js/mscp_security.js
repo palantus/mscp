@@ -90,7 +90,7 @@ async function initSecurity(){
             },
             deleteRecord: {
               onDelete: async function(record, cb){
-                await req("remove-access-sub-rule", {accessId: curAccess.id, ruleId: record.id});
+                await req("remove-access-sub-rule", record);
                 cb();
               }
             },
@@ -134,7 +134,7 @@ async function initSecurity(){
             },
             deleteRecord: {
               onDelete: async function(record, cb){
-                await req("remove-access-key", {accessId: curAccess.id, ruleId: record.id});
+                await req("remove-access-key", record);
                 cb();
               }
             },

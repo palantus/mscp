@@ -614,7 +614,7 @@ class Setup{
               a.subRules = []
 
             for(let i = 0; i < a.subRules.length; i++){
-              if(a.subRules[i].id == data.ruleId){
+              if(a.subRules[i].path == data.path && a.subRules[i].parameters == data.parameters){
                 a.subRules.splice(i, 1)
                 break;
               }
@@ -660,7 +660,7 @@ class Setup{
               a.accessKeys = []
 
             for(let i = 0; i < a.accessKeys.length; i++){
-              if(a.accessKeys[i].id == data.ruleId){
+              if(a.accessKeys[i].description == data.description && a.accessKeys[i].key == data.key){
                 a.accessKeys.splice(i, 1)
                 break;
               }
