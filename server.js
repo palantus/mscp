@@ -511,7 +511,7 @@ class Server{
 
       if(data[arg.name] !== undefined)
         val = data[arg.name]
-      else if(Array.isArray(data) && data[argNum] !== undefined)
+      else if(/*Array.isArray(data) && */data[argNum] !== undefined) //Can be an object which has been merged with an array = {'0': 'val1', 'arg2': 'val2'}, so don't check if it's an array
         val = data[argNum]
       else if(pathParts.length > argNum && pathParts[argNum] != "null")
         val = decodeURI(pathParts[argNum])
