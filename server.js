@@ -60,7 +60,7 @@ class Server{
           else if(new RegExp(this.setupHandler.setup.allowedOrigins).test(req.header("Origin")))
             allowOrigin = req.header("Origin")
           else
-            console.log(`Got CORS request from origin "${req.header("Origin")}", which is not allowed.`)
+            console.log(`Got CORS request from origin "${req.header("Origin")}", which is not allowed. IP: ${this.setupHandler.setup.trustProxy === true ? (req.headers['x-forwarded-for'] || req.connection.remoteAddress) : req.connection.remoteAddress}`)
 
           res.set('Access-Control-Allow-Origin', allowOrigin)
           res.set('Access-Control-Allow-Credentials', true)
