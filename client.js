@@ -147,7 +147,7 @@ class Client{
   }
 
   async addForward(fwd){
-    let server = this.setupHandler.setup.servers.find((s) => s.name == fwd.server);
+    let server = this.setupHandler.setup.servers.find((s) => s.id == fwd.server || s.name == fwd.server);
     let fdef = await this.getForwardFunctionDef(fwd)
     if(!fdef)
       return;
@@ -214,7 +214,7 @@ class Client{
   async getForwardFunctionDef(forward){
     await this.mscp.client.loadDefinitionsPromise;
 
-    let server = this.setupHandler.setup.servers.find((s) => s.name == forward.server);
+    let server = this.setupHandler.setup.servers.find((s) => s.id == forward.server || s.name == forward.server);
     if(!server || server.enabled === false)
       return null;
 

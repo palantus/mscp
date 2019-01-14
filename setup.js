@@ -496,6 +496,11 @@ class Setup{
       // -------------------------
       case "get-forwards":
         response = this.setup.forwards !== undefined ? this.setup.forwards : []
+        response = response.map((f) => {
+          f.serverName = this.setup.servers.find((s) => s.id == f.server || s.name == f.server).name
+          f.localnamespace = this.setup.servers.find((s) => s.id == f.server || s.name == f.server).namespace
+          return f;
+        })
         break;
 
       case "add-forward":
@@ -520,7 +525,7 @@ class Setup{
       case "remove-forward":
         if(data && data.server !== undefined && data.server != "" && data.function !== undefined && data.function != ""){
           for(let i = 0; i < this.setup.forwards.length; i++){
-            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function){
+            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function && (!this.setup.forwards[i].namespace || this.setup.forwards[i].namespace == data.namespace)){
               this.setup.forwards.splice(i, 1)
             }
           }
@@ -531,7 +536,7 @@ class Setup{
       case "update-forward":
         if(data && data.server !== undefined && data.server != "" && data.function !== undefined && data.function != ""){
           for(let i = 0; i < this.setup.forwards.length; i++){
-            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function){
+            if(this.setup.forwards[i].server == data.server && this.setup.forwards[i].function == data.function && (!this.setup.forwards[i].namespace || this.setup.forwards[i].namespace == data.namespace)){
               this.setup.forwards[i].forwardAccessKey = data.forwardAccessKey;
             }
           }

@@ -333,7 +333,7 @@ class Server{
 
       let server = null;
       for(let serv of setup.servers){
-        if(serv.name == s.server){
+        if(serv.id == s.server || serv.name == s.server){
           server = serv;
           break;
         }
@@ -446,7 +446,7 @@ class Server{
 
       if(namespace && server){
         for(let fwd of this.setupHandler.setup.forwards || []){
-          if(fwd.server == server.name && fwd.function.toLowerCase() == pathParts[0].toLowerCase()){
+          if((fwd.server == server.name || fwd.server == server.id) && fwd.function.toLowerCase() == pathParts[0].toLowerCase()){
             functionName = fwd.function
             pathParts.shift()
 

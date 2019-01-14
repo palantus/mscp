@@ -9,9 +9,11 @@ function initForward(){
             showRecordsPerPageSelector: false,
             showFieldsSelector: false,
             columns: [
-                  {title: "Server", dataKey: "server"},
-                  {title: "Namespace", dataKey: "namespace"},
+                  {title: "Remote id", dataKey: "server"},
+                  {title: "Remote name", dataKey: "serverName"},
+                  {title: "Remote namespace", dataKey: "namespace"},
                   {title: "Function", dataKey: "function"},
+                  {title: "Local namespace", dataKey: "localnamespace"},
                   {title: "Forward access key", dataKey: "forwardAccessKey"}
                  ],
             dataSource: async function(onData){
