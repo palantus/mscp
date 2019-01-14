@@ -21,7 +21,7 @@ function initRemote(){
               fields: [
                 {name: "type", title: "Type", type: "select", values: ["http", "websocket-client", "websocket-server"], onChange: function(newVal, control, popup){
                   if(newVal == "http"){
-                    popup.find("input[name=accesskey]").parent().parent().hide();
+                    popup.find("input[name=accesskey]").parent().parent().show();
                     popup.find("input[name=url]").parent().parent().show();
                   } else if(newVal == "websocket-server"){
                     popup.find("input[name=accesskey]").parent().parent().show();
@@ -42,7 +42,7 @@ function initRemote(){
                 {name: "name", title: "Name", visible: false},
                 {name: "url", title: "URL"},
                 {name: "namespace", title: "Namespace"},
-                {name: "accesskey", title: "Access key", visible: false},
+                {name: "accesskey", title: "Access key"},
                 {name: "enabled", title: "Enabled", type: "checkbox"}
               ],
               validate: function(record){
