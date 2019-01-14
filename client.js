@@ -235,8 +235,12 @@ class Client{
 async function _request(body){
   return new Promise((resolve, reject) => {
       request(body, (error, response, body) => {
-          if(error) reject(error)
-          else resolve(body)
+          if(error || (response.statusCode >= 400 && response.statusCode < 600)) {
+            console.log(`Request error: received status code ${response.statusCode} when calling "${body.url}". Error: ${error || body}`)
+            reject(error || body)
+          } else {
+            resolve(body)
+          }
       })
   })
 }
