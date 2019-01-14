@@ -126,7 +126,8 @@ function initRemote(){
                    for(let f of def.serve){
                       f.arguments = formatFunctionArgsAsString(f.args);
                    }
-                   onData(def.serve);
+                   let serverFunctionsSorted = def.serve.sort((s1, s2) => s1.namespace < s2.namespace ? -1 : s1.namespace == s2.namespace && s1.name < s2.name ? -1 : 1 )
+                   onData(serverFunctionsSorted);
                  } else {
                    onData([])
                    new Notifier().show(def.error)
