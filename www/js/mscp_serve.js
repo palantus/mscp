@@ -202,7 +202,7 @@ function refreshServeNamespaceFilter(serve){
     $("#serve-namespace-select").append(`<option value="all">All</option>`)
 
   let namespacesAdded = new Set()
-  for(let s of serve.filter((v) => v.namespace ? true : false)){
+  for(let s of serve.sort((a, b) => a.namespace < b.namespace ? -1 : 1).filter((v) => v.namespace ? true : false)){
     if(!namespacesAdded.has(s.namespace) && $(`#serve-namespace-select option[value=${s.namespace}]`).length < 1){
       $("#serve-namespace-select").append(`<option value="${s.namespace}">${s.namespace}</option>`)
       namespacesAdded.add(s.namespace);
