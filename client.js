@@ -236,7 +236,7 @@ async function _request(_body){
   return new Promise((resolve, reject) => {
       request(_body, (error, response, body) => {
           if(error || (response.statusCode >= 400 && response.statusCode < 600)) {
-            console.log(`Request error: received status code ${response.statusCode} when calling "${_body.url}". Error: ${error || body}`)
+            console.log(`Request error: received status code ${response ? response.statusCode: "<none>"} when calling "${_body.url}". Error: ${error || body}`)
             reject(error || body)
           } else {
             resolve(body)
