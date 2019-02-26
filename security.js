@@ -45,7 +45,12 @@ class Security{
     }
 
     if(accessKey !== undefined){
-      res.cookie(accessKeyCookieName, accessKey, {expires: new Date(Date.now() + 1500000000), httpOnly: false });
+      if(this.setup.accessKeyExpirationDays){
+        let today = new Date();
+        res.cookie(accessKeyCookieName, accessKey, {expires: new Date(today.getFullYear(),today.getMonth(),today.getDate()+this.setup.accessKeyExpirationDays), httpOnly: false });
+      } else {
+        res.cookie(accessKeyCookieName, accessKey, {expires: new Date(Date.now() + 1500000000), httpOnly: false });
+      }
     }
 
     req.mscp = {ip: ip, accessKey: accessKey, area: area}
