@@ -161,7 +161,7 @@ class Client{
       obj = this.mscp
     }
 
-    obj[fdef.name] = async (...args) => {
+    obj[fdef.name] = async function(...args) {
 
         let data = {}
         for(let i = 0; i < fdef.args.length && i < args.length; i++){
@@ -173,7 +173,33 @@ class Client{
           }
         }
 
-        return await this.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data)
+        if(server.type == "http"){
+
+          if(this.request.req.files){
+            // Handle file upload
+            return await new Promise((resolve, reject) => {
+                let url = server.url + "/api/" + (fwd.namespace?fwd.namespace+"/":"") + fwd.function + (server.accesskey ? "?accessKey=" + server.accesskey : "")
+                let req = request.post(url);
+                let form = req.form();
+
+                for(let filedef in this.request.req.files){
+                  let file = Array.isArray(this.request.req.files[filedef]) ? this.request.req.files[filedef] : [this.request.req.files[filedef]]
+                  for(let f of file){
+                    form.append('file', f.data, {
+                      filename: f.name,
+                      contentType: f.mimetype
+                    });
+                  }
+                }
+
+                req.pipe(this.request.res)
+            })
+          } else {
+            return await this.mscp.client.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data, undefined, this.request.res)
+          }
+        } else {
+          return await this.mscp.client.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data)
+        }
     }
   }
 
@@ -232,16 +258,19 @@ class Client{
   }
 }
 
-async function _request(_body){
+async function _request(_body, _pipeToRes){
   return new Promise((resolve, reject) => {
-      request(_body, (error, response, body) => {
+      let req = request(_body, (error, response, body) => {
           if(error || (response.statusCode >= 400 && response.statusCode < 600)) {
-            console.log(`Request error: received status code ${response ? response.statusCode: "<none>"} when calling "${_body.url}". Error: ${error || body}`)
+            console.log(`Request error: received status code ${response.statusCode} when calling "${_body.url}". Error: ${error || body}`)
             reject(error || body)
           } else {
             resolve(body)
           }
-      })
+      });
+      if(_pipeToRes){
+        req.pipe(_pipeToRes)
+      }
   })
 }
 

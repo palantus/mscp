@@ -201,6 +201,10 @@ class Server{
       response = await this.handleRequest(apiPath, data, req, res)
     }
 
+    if(response == null || response == undefined){
+      return;
+    }
+
     if(typeof response === "object" && response.type == "download" && typeof response.file.path == "string"){
       let file = response.file
       let responseFilename = file.name ? file.name : path.basename(file.path)
@@ -376,7 +380,7 @@ class Server{
 
       this.handler[namespace][functionName] = async function(...args){
         if(this.mscp[namespace] !== undefined && this.mscp[namespace][functionName] !== undefined){
-          return await this.mscp[namespace][functionName].apply(this.mscp, args)
+          return await this.mscp[namespace][functionName].apply(this, args)
         } else {
           return {error: "Not implemented"}
         }
@@ -384,7 +388,7 @@ class Server{
     } else {
       this.handler[functionName] = async function(...args){
         if(this.mscp[functionName] !== undefined){
-          return await this.mscp[functionName].apply(this.mscp, args)
+          return await this.mscp[functionName].apply(this, args)
         } else {
           return {error: "Not implemented"}
         }
@@ -574,9 +578,13 @@ class Server{
       return {success: false, error: result.error, result: result}
     }
 
+    if(res.headersSent){
+      return null;
+    }
+
     let ret = {success: true, result: result !== undefined ? result : null}
 
-    if(fdef.returntype == "download"){
+    if(fdef.returntype == "download" && result != null){
       ret.type = "download"
       if(typeof result === "string"){
         ret.file = {path: result}

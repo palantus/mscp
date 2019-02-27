@@ -131,7 +131,7 @@ class ClientConnections{
     }
   }
 
-  call(server, _method, _data, _accessKey){
+  call(server, _method, _data, _accessKey, _pipeToRes){
     let data = _data !== undefined ? JSON.parse(JSON.stringify(_data)) : {}
     let method = JSON.parse(JSON.stringify(_method))
 
@@ -153,19 +153,18 @@ class ClientConnections{
                 "content-type": "application/json",
             },
             json: data
-          }))
+          }, _pipeToRes))
         } catch(err){
           console.log("Error in calling dependency '" + method + "': " + err)
           reject(err);
           return;
         }
 
-        //response = SON.parse(response)
-        if(response.error !== undefined){
+        if(response && response.error !== undefined){
           console.log("Error in calling dependency '" + method + "': " + response.error)
           reject(response.error);
         }
-        resolve(method == "" ? response : response.result)
+        resolve(method == "" ? response : response ? response.result : null)
       } else {
 
         if(this.conns[server.id] === undefined){
