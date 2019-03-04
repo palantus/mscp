@@ -6,7 +6,7 @@ class MSCP{
     this.def = await this.apireq("")
     this.mscp_request_include_always_parms = {}
 
-    if(this.def.error !== undefined && localStorage.MSCPDefinition !== undefined){
+    if(this._isLocalStorageAvailable() === true && this.def.error !== undefined && localStorage.MSCPDefinition !== undefined){
       this.def = JSON.parse(localStorage.MSCPDefinition)
       console.log("Could not fetch MSCP definition, so the one from localStorage is used")
     }
@@ -15,7 +15,9 @@ class MSCP{
       for(let s of this.def.serve){
         this._addDependency(s)
       }
-      localStorage.MSCPDefinition = JSON.stringify(this.def);
+      if(this._isLocalStorageAvailable() === true){
+        localStorage.MSCPDefinition = JSON.stringify(this.def);
+      }
       return true;
     }
 
@@ -95,6 +97,17 @@ class MSCP{
     } catch(err){
       console.log(err)
       return {success: false, error: "Could not connect to server or received invalid response"};
+    }
+  }
+
+  _isLocalStorageAvailable(){
+    var test = 'test';
+    try {
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch(e) {
+        return false;
     }
   }
 }
