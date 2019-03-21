@@ -578,7 +578,7 @@ class Server{
       return {success: false, error: result.error, result: result}
     }
 
-    if(res.headersSent){
+    if(res && res.headersSent){
       return null;
     }
 
