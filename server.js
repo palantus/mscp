@@ -537,7 +537,12 @@ class Server{
           val = (typeof val === "object" && !Array.isArray(val)) ? val : (typeof val == "string") ? JSON.parse(val) : null
           break;
         case "array":
-          val = Array.isArray(val) ? val : null
+          if(Array.isArray(val))
+            val = val;
+          else if(typeof val === "string" && val.startsWith("["))
+            val = JSON.parse(val)
+          else
+            val = null;
           break;
       }
 
