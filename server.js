@@ -185,11 +185,11 @@ class Server{
           res.end(js2xmlparser.parse("root", result))
         } else {
           res.writeHead(200, {'Content-Type': cType});
-          res.end(JSON.stringify(result, null, 2));
+          res.end(JSON.stringify(result));
         }
       } else {
         res.writeHead(200, {'Content-Type':'application/json'});
-        res.end(JSON.stringify({error: "Invalid response. Server Error. ", apiPath: apiPath, data: data, baseUrl: req.baseUrl}, null, 2));
+        res.end(JSON.stringify({error: "Invalid response. Server Error. ", apiPath: apiPath, data: data, baseUrl: req.baseUrl}));
       }
     }
 
