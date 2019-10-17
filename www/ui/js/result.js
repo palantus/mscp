@@ -185,6 +185,8 @@ class ResultParser{
         ah.show();
     }
 
+    if(action.rerunParentAfter === true)
+      this.actionHandler.run()
   }
 
   getValueByPath(active, path){
