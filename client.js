@@ -175,7 +175,7 @@ class Client{
 
         if(server.type == "http"){
 
-          if(this.request.req.files){
+          if(this.request.req && this.request.req.files){
             // Handle file upload
             return await new Promise((resolve, reject) => {
                 let url = server.url + "/api/" + (fwd.namespace?fwd.namespace+"/":"") + fwd.function + (server.accesskey ? "?accessKey=" + server.accesskey : "")
