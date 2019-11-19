@@ -24,7 +24,10 @@ class MSCP{
     this.mscpReady = new Promise((resolve) => this.mscpReadyResolve = resolve);
 
     if(typeof process.send === "function"){
-      this.mscpReady.then(()=> process.send("mscp-is-ready"))
+      this.mscpReady.then(()=> {
+        process.send("mscp-is-ready");
+        setInterval(() => {process.send("mscp-mem:" + (process.memoryUsage().heapTotal / 1024 / 1024))}, 10000)
+      })
     }
   }
 
