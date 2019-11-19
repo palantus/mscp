@@ -26,6 +26,7 @@ class MSCP{
     if(typeof process.send === "function"){
       this.mscpReady.then(()=> {
         process.send("mscp-is-ready");
+        process.send("mscp-version:" + require('./package.json').version);
         setInterval(() => {process.send("mscp-mem:" + (process.memoryUsage().heapTotal / 1024 / 1024))}, 10000)
       })
     }
