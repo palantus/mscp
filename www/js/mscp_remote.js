@@ -14,6 +14,7 @@ function initRemote(){
                   {title: "URL", dataKey: "url", visible: false},
                   {title: "Namespace", dataKey: "namespace"},
                   {title: "Access key", dataKey: "accesskey", visible: false},
+                  {title: "Forward accesskey", dataKey: "forwardAccessKeyShow", visible: false},
                   {title: "Running", dataKey: "running"},
                   {title: "Enabled", dataKey: "enabled"}
                  ],
@@ -43,7 +44,8 @@ function initRemote(){
                 {name: "url", title: "URL"},
                 {name: "namespace", title: "Namespace"},
                 {name: "accesskey", title: "Access key"},
-                {name: "enabled", title: "Enabled", type: "checkbox"}
+                {name: "enabled", title: "Enabled", type: "checkbox"},
+                {name: "forwardAccessKey", title: "Forward access key", type: "checkbox"}
               ],
               validate: function(record){
                 if(record.type == "http")
@@ -65,6 +67,7 @@ function initRemote(){
               for(s of status) s.running = s.running ? "Yes" : "No"
               for(s of status) s.enabled = s.enabled ? "Yes" : "No"
               for(s of status) s.websocket = s.websocket ? "Yes" : "No"
+              for(s of status) s.forwardAccessKeyShow = s.forwardAccessKey ? "Yes" : "No"
               onData(status);
             },
             editRecord: {
@@ -72,7 +75,8 @@ function initRemote(){
                 {name: "name", title: "Name"},
                 {name: "namespace", title: "Namespace"},
                 {name: "enabled", title: "Enabled", type: "checkbox"},
-                {name: "accesskey", title: "Access key"}
+                {name: "accesskey", title: "Access key"},
+                {name: "forwardAccessKey", title: "Forward access key", type: "checkbox"}
               ],
               onEdit: async function(oldRecord, newRecord, cb){
                 await req("update-server", newRecord);

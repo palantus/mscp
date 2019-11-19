@@ -178,7 +178,7 @@ class Client{
           if(this.request.req && this.request.req.files){
             // Handle file upload
             return await new Promise((resolve, reject) => {
-                let url = server.url + "/api/" + (fwd.namespace?fwd.namespace+"/":"") + fwd.function + (server.accesskey ? "?accessKey=" + server.accesskey : "")
+                let url = server.url + "/api/" + (fwd.namespace?fwd.namespace+"/":"") + fwd.function + (server.accesskey ? "?accessKey=" + server.accesskey : (server.forwardAccessKey === true ? "?accessKey=" + this.request.req.mscp.accessKey : ""))
                 let req = request.post(url);
                 let form = req.form();
 
@@ -195,10 +195,10 @@ class Client{
                 req.pipe(this.request.res)
             })
           } else {
-            return await this.mscp.client.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data, undefined, this.request.res)
+            return await this.mscp.client.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data, (server.accesskey ? server.accesskey : (server.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)), this.request.res)
           }
         } else {
-          return await this.mscp.client.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data)
+          return await this.mscp.client.connectionManager.call(server, (fwd.namespace?fwd.namespace+"/":"") + fwd.function, data, (server.accesskey ? server.accesskey : (server.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)))
         }
     }
   }

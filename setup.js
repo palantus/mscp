@@ -103,6 +103,7 @@ class Setup{
               this.setup.servers[i].enabled = data.enabled;
               this.setup.servers[i].websocket = data.websocket;
               this.setup.servers[i].accesskey = data.accesskey;
+              this.setup.servers[i].forwardAccessKey = data.forwardAccessKey;
             }
           }
           await this.updateDependencyToServer();
