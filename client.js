@@ -4,6 +4,7 @@ const request = require("request")
 const fs = require("fs")
 const ConnectionManager = require("./connectionmanager.js")
 const EventEmitter = require('events')
+const streams = require('memory-streams')
 class FunctionReadyEventEmitter extends EventEmitter{}
 
 class Client{
@@ -139,10 +140,17 @@ class Client{
         return;
       }
 
+      let pipeToRes = undefined;
+      let res;
+      if(dep.returntype === "download"){
+        pipeToRes = new streams.WritableStream();
+      }
       if(setupServer)
-        return await self.connectionManager.call(chosenServer, (setupServer.namespace?setupServer.namespace+'/':'') + setupServer.method, data, (chosenServer.accesskey ? chosenServer.accesskey : (chosenServer.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)))
+        res = await self.connectionManager.call(chosenServer, (setupServer.namespace?setupServer.namespace+'/':'') + setupServer.method, data, (chosenServer.accesskey ? chosenServer.accesskey : (chosenServer.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)), pipeToRes)
       else
-        return await self.connectionManager.call(chosenServer, dep.name.replace(/\./g, '/'), data, (chosenServer.accesskey ? chosenServer.accesskey : (chosenServer.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)))
+        res = await self.connectionManager.call(chosenServer, dep.name.replace(/\./g, '/'), data, (chosenServer.accesskey ? chosenServer.accesskey : (chosenServer.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)), pipeToRes)
+
+      return pipeToRes ? pipeToRes : res;
     }
   }
 
@@ -159,6 +167,11 @@ class Client{
       obj = this.mscp[fdef.namespace]
     } else {
       obj = this.mscp
+    }
+
+    if(obj[fdef.name] !== undefined){
+      console.log(`ERROR: you cannot forward and depend on the same namespace and function name. Forward function "${fdef.name}" ignored.`)
+      return;
     }
 
     obj[fdef.name] = async function(...args) {
@@ -260,16 +273,20 @@ class Client{
 
 async function _request(_body, _pipeToRes){
   return new Promise((resolve, reject) => {
-      let req = request(_body, (error, response, body) => {
-          if(error || (response.statusCode >= 400 && response.statusCode < 600)) {
-            console.log(`Request error: received status code ${response ? response.statusCode : "N/A"} when calling "${_body.url}". Error: ${error || body}`)
-            reject(error || body)
-          } else {
-            resolve(body)
-          }
-      });
       if(_pipeToRes){
-        req.pipe(_pipeToRes)
+        // For some reason large files (>~200KB) doesn't result in finish being called. Seems like request bug:
+        // https://github.com/request/request/issues/2905
+        
+        request(_body).pipe(_pipeToRes).on('finish', () => resolve(_pipeToRes))
+      } else {
+        let req = request(_body, (error, response, body) => {
+            if(error || (response.statusCode >= 400 && response.statusCode < 600)) {
+              console.log(`Request error: received status code ${response ? response.statusCode : "N/A"} when calling "${_body.url}". Error: ${error || body}`)
+              reject(error || body)
+            } else {
+              resolve(body)
+            }
+        });
       }
   })
 }

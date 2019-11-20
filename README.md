@@ -3,7 +3,7 @@
 TBD!
 
 ## Sample server/client
-```
+```javascript
 const MSCP = require("mscp");
 const Handler = require("./handler.js");
 const path = require("path");
@@ -25,7 +25,7 @@ In your handler, you can access the context of the current reqest using the prop
 
 ## Sample browser client:
 
-```
+```HTML
 <script src="/mscp/js/browser.js"></script>
 <script src="/mscp/js/jquery.min.js"></script>
 <script>
@@ -60,7 +60,7 @@ TBD
 
 ## Sample UI Setup, with a single function as entry:
 
-```
+```JSON
 {
   "apps": {
     "": {"title": "Starter", "items": ["services", "kill", "log"], "defaultIndex": 0, "showMenu": false}
@@ -105,3 +105,11 @@ You can enable CORS by setting ''allowedOrigins'' in ''setup.json'' to the domai
 ## Access keys
 
 Access keys expire every 18 days by default, but can be extended by setting ''accessKeyExpirationDays'' in setup.json.
+
+## Depend on download function
+You can access the file if you call a download function dependency like this:
+
+```javascript
+let file = await this.mscp.files.download.call(this, "123")
+file.toBuffer().toString()
+```
