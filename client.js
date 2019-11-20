@@ -140,9 +140,9 @@ class Client{
       }
 
       if(setupServer)
-        return await self.connectionManager.call(chosenServer, (setupServer.namespace?setupServer.namespace+'/':'') + setupServer.method, data)
+        return await self.connectionManager.call(chosenServer, (setupServer.namespace?setupServer.namespace+'/':'') + setupServer.method, data, (chosenServer.accesskey ? chosenServer.accesskey : (chosenServer.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)))
       else
-        return await self.connectionManager.call(chosenServer, dep.name.replace(/\./g, '/'), data)
+        return await self.connectionManager.call(chosenServer, dep.name.replace(/\./g, '/'), data, (chosenServer.accesskey ? chosenServer.accesskey : (chosenServer.forwardAccessKey === true ? this.request.req.mscp.accessKey : undefined)))
     }
   }
 
