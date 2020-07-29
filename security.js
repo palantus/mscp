@@ -47,9 +47,9 @@ class Security{
     if(accessKey !== undefined){
       if(this.setup.accessKeyExpirationDays){
         let today = new Date();
-        res.cookie(accessKeyCookieName, accessKey, {expires: new Date(today.getFullYear(),today.getMonth(),today.getDate()+this.setup.accessKeyExpirationDays), httpOnly: false });
+        res.cookie(accessKeyCookieName, accessKey, {expires: new Date(today.getFullYear(),today.getMonth(),today.getDate()+this.setup.accessKeyExpirationDays), httpOnly: false, sameSite: "None" });
       } else {
-        res.cookie(accessKeyCookieName, accessKey, {expires: new Date(Date.now() + 1500000000), httpOnly: false });
+        res.cookie(accessKeyCookieName, accessKey, {expires: new Date(Date.now() + 1500000000), httpOnly: false, sameSite: "None" });
       }
     }
 
