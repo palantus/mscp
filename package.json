@@ -1,6 +1,6 @@
 {
   "name": "mscp",
-  "version": "1.3.5",
+  "version": "1.3.6",
   "main": "mscp.js",
   "repository": "palantus/mscp",
   "License": "MIT",
@@ -12,6 +12,7 @@
     "body-parser": "^1.18.2",
     "commander": "*",
     "cookie-parser": "*",
+    "cors": "^2.8.5",
     "express": "*",
     "express-fileupload": "*",
     "js2xmlparser": "^3.0.0",

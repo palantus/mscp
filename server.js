@@ -12,6 +12,7 @@ const WebSocket = require('ws')
 const SecurityHandler = require("./security.js")
 const fileUpload = require('express-fileupload');
 const js2xmlparser = require('js2xmlparser')
+const cors = require("cors")
 
 //Run using --harmony-async-await on node version 7+
 
@@ -53,25 +54,29 @@ class Server{
       }
 
       if(this.setupHandler.setup.allowedOrigins){
-        app.use("/api*", (req, res, next) => {
-          let allowOrigin = null;
-          if(req.header("Origin") == this.setupHandler.setup.allowedOrigins)
-            allowOrigin = req.header("Origin")
-          else if(new RegExp(this.setupHandler.setup.allowedOrigins).test(req.header("Origin")))
-            allowOrigin = req.header("Origin")
-          else
-            console.log(`Got CORS request from origin "${req.header("Origin")}", which is not allowed. IP: ${this.setupHandler.setup.trustProxy === true ? (req.headers['x-forwarded-for'] || req.connection.remoteAddress) : req.connection.remoteAddress}`)
+        if(this.setupHandler.setup.allowedOrigins == "*"){
+          app.use(cors())
+        } else {
+          app.use("/api*", (req, res, next) => {
+            let allowOrigin = null;
+            if(req.header("Origin") == this.setupHandler.setup.allowedOrigins)
+              allowOrigin = req.header("Origin")
+            else if(new RegExp(this.setupHandler.setup.allowedOrigins).test(req.header("Origin")))
+              allowOrigin = req.header("Origin")
+            else
+              console.log(`Got CORS request from origin "${req.header("Origin")}", which is not allowed. IP: ${this.setupHandler.setup.trustProxy === true ? (req.headers['x-forwarded-for'] || req.connection.remoteAddress) : req.connection.remoteAddress}`)
 
-          res.set('Access-Control-Allow-Origin', allowOrigin)
-          res.set('Access-Control-Allow-Credentials', true)
-          res.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
-          res.set('Access-Control-Allow-Headers', 'Content-Type')
-          if ('OPTIONS' === req.method){
-            res.sendStatus(200);
-          } else {
-            next();
-          }
-        })
+            res.set('Access-Control-Allow-Origin', allowOrigin)
+            res.set('Access-Control-Allow-Credentials', true)
+            res.set('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS')
+            res.set('Access-Control-Allow-Headers', 'Content-Type')
+            if ('OPTIONS' === req.method){
+              res.sendStatus(200);
+            } else {
+              next();
+            }
+          })
+        }
       }
       app.use(fileUpload())
       app.use(bodyParser.urlencoded({extended: true }))

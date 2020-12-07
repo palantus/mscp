@@ -102,6 +102,8 @@ TBD
 
 You can enable CORS by setting ''allowedOrigins'' in ''setup.json'' to the domains that should be allowed. It supports regexps.
 
+If you want to allow all cors, then just set it to ''*'', would would make it use the cors npm module with default options.
+
 ## Access keys
 
 Access keys expire every 18 days by default, but can be extended by setting ''accessKeyExpirationDays'' in setup.json.
