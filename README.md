@@ -102,7 +102,9 @@ TBD
 
 You can enable CORS by setting ''allowedOrigins'' in ''setup.json'' to the domains that should be allowed. It supports regexps.
 
-If you want to allow all cors, then just set it to ''*'', would would make it use the cors npm module with default options.
+If you want to allow all cors (send *), then just set it to ''*'', would would make it use the cors npm module with default options.
+
+If you want to allow all, including credentials, then set it to ''**''.
 
 ## Access keys
 

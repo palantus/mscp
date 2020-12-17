@@ -56,6 +56,8 @@ class Server{
       if(this.setupHandler.setup.allowedOrigins){
         if(this.setupHandler.setup.allowedOrigins == "*"){
           app.use(cors())
+        } else if(this.setupHandler.setup.allowedOrigins == "**"){
+          app.use(cors({ origin: true, credentials: true }))
         } else {
           app.use("/api*", (req, res, next) => {
             let allowOrigin = null;
